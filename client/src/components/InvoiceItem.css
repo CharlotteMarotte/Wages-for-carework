@@ -1,0 +1,17 @@
+
+
+.InvoiceItem input {
+    width: 100%;
+}
+
+.InvoiceItem input[type=number]{
+margin: 0 auto;
+width: 35%
+}
+
+.InvoiceItem p {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2px;
+}
+
