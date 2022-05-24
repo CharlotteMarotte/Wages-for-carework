@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
-import InvoiceForm from './components/InvoiceForm';
-import InvoiceDoc from './components/InvoiceDoc';
+
+import Navbar from './components/Navbar';
+import HomeView from './views/Homeview';
+import AboutView from './views/AboutView';
+import CreateInvoiceView from './views/CreateInvoiceView';
+import InvoiceDocView from './views/InvoiceDocView';
+import Error404View from './views/Error404View';
 
 const BILL_CATEGORIES = [
   {
@@ -28,47 +34,26 @@ function App() {
   //
   // Declare state/reactive variables with initial values
   //
-  const [submitted, setSubmitted] = useState(false);
-  const [createClicked, setCreateClicked] = useState(true);
 
   //
   // Declare funcs used in this component
   //
 
-  const showInvoiceForm = () => {
-    setCreateClicked(true);
-  };
-
-  const showHome = () => {
-    setCreateClicked(false);
-    setSubmitted(false);
-  };
-
-  const showInvoiceDoc = () => {
-    setSubmitted(true);
-  };
-
   return (
     <div className="App">
-      <nav onClick={showHome}>HOME</nav>
-      {!createClicked && (
-        <button type="button" onClick={showInvoiceForm} id="createButton">
-          CREATE INVOICE
-        </button>
-      )}
-      {createClicked && !submitted && (
-        <InvoiceForm
-          billCatFromApp={BILL_CATEGORIES}
-          showInvoiceDocCb={showInvoiceDoc}
-        />
-      )}
-      {submitted && (
-        <InvoiceDoc
-          billCatFromApp={BILL_CATEGORIES}
-          showInvoiceDocCb={showInvoiceDoc}
-        />
-      )}
-    </div>
+    <h1>React Router Demo</h1>
+
+    {/* <Navbar /> */}
+
+    <Routes>
+        <Route path="/" element={<HomeView />} />
+        <Route path="about" element={<AboutView/>} />
+        <Route path="create" element={<CreateInvoiceView/>} />
+        <Route path="invoice" element={<InvoiceDocView/>} />
+        <Route path="*" element={<Error404View />} />
+    </Routes>
+</div>
+    
   );
 }
 

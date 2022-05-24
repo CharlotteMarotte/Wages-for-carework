@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import './InvoiceForm.css';
-import InvoiceItem from './InvoiceItem';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import './CreateInvoiceView.css';
+import InvoiceItem from '../components/InvoiceItem';
 
 const EMPTY_FORM = {
   nameSender: '',
@@ -12,9 +13,11 @@ const EMPTY_FORM = {
   emailRecipient: '',
 };
 
-export default function InvoiceForm(props) {
+export default function CreateInvoiceView(props) {
   const [contactData, setContactData] = useState(EMPTY_FORM);
   const [amount, setAmount] = useState(0);
+  const navigate = useNavigate();
+
 
   // gets called every time a key is pressed
   const handleInputChange = (event) => {
@@ -36,6 +39,7 @@ export default function InvoiceForm(props) {
     //   props.addProject(project);
     // empty form after set
     setContactData(EMPTY_FORM);
+    navigate('/users');  // redirect to /users
   };
 
   //   need to call this in InvoiceItem
@@ -45,7 +49,7 @@ export default function InvoiceForm(props) {
   }
 
   return (
-    <div className="InvoiceForm">
+    <div className="CreateInvoiceView">
       {/* add handleSubmit function to onSubmit event */}
       <form onSubmit={handleSubmit}>
         <div>
@@ -120,9 +124,9 @@ export default function InvoiceForm(props) {
           <div className="seperator"></div>
 
           <div className="InvoiceItem">
-            {props.billCatFromApp.map((p) => (
+            {props.billCatFromApp.map((p, index) => (
               // arrow function, so it doesn't get called immediately but only after a click
-              <InvoiceItem billCatFromApp={p} />
+              <InvoiceItem key={index} billCatFromApp={p} />
             ))}
           </div>
           <p>Total: {amount} €</p>

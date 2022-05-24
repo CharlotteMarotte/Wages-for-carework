@@ -1,14 +1,14 @@
 import React from 'react';
-import './InvoiceDoc.css';
-import InvoiceDocItem from './InvoiceDocItem';
+import './InvoiceDocView.css';
+import InvoiceDocItem from '../components/InvoiceDocItem';
 
-export default function InvoiceDoc(props) {
+export default function InvoiceDocView(props) {
   return (
-    <div class="InvoiceDoc">
+    <div class="InvoiceDocView">
       <div className="seperatorDoc"></div>
       <h1>INVOICE DATE: </h1>
       <h2>BILL TO: THE PATRIARCHY</h2>
-      <div className="seperatorDoc"></div>
+      <div className="InvoiceDocView"></div>
       <div className="InvoiceDocGrid">
         <p>Description</p>
         <p>Rate</p>

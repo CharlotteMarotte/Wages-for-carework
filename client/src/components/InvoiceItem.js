@@ -32,8 +32,8 @@ export default function InvoiceItem(props) {
   };
 
   return (
-    <>
-      <button type="button">X</button>
+    <React.Fragment>
+      <input type="checkbox" />
 
       <p>{props.billCatFromApp.name}</p>
 
@@ -55,6 +55,6 @@ export default function InvoiceItem(props) {
       />
 
       <p>{invoiceData.rate * invoiceData.quantity}</p>
-    </>
+    </React.Fragment>
   );
 }
