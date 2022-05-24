@@ -4,7 +4,7 @@ import InvoiceDocItem from '../components/InvoiceDocItem';
 
 export default function InvoiceDocView(props) {
   return (
-    <div class="InvoiceDocView">
+    <div className="InvoiceDocView">
       <div className="seperatorDoc"></div>
       <h1>INVOICE DATE: </h1>
       <h2>BILL TO: THE PATRIARCHY</h2>
@@ -17,9 +17,9 @@ export default function InvoiceDocView(props) {
       </div>
       <div className="InvoiceDocItems">
         <ul>
-          {props.billCatFromApp.map((p) => (
+          {props.billCatFromApp.map((p, index) => (
             // arrow function, so it doesn't get called immediately but only after a click
-            <p>{p.name}</p>
+            <p key={index}>{p.name}</p>
           ))}
         </ul>
       </div>

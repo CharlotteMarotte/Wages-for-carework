@@ -1,6 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
 .App {
   width: 800px;
   margin: 50px auto;
+}
+
+.App h1{
+  text-align: center;
 }
 
 .App nav{

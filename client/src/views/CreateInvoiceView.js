@@ -1,4 +1,3 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
 import React, {useState} from 'react';
 import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
@@ -16,7 +15,6 @@ const EMPTY_FORM = {
 export default function CreateInvoiceView(props) {
   const [contactData, setContactData] = useState(EMPTY_FORM);
   const [amount, setAmount] = useState(0);
-  const navigate = useNavigate();
 
 
   // gets called every time a key is pressed
@@ -39,7 +37,7 @@ export default function CreateInvoiceView(props) {
     //   props.addProject(project);
     // empty form after set
     setContactData(EMPTY_FORM);
-    navigate('/users');  // redirect to /users
+    props.showInvoiceDocCb();
   };
 
   //   need to call this in InvoiceItem
