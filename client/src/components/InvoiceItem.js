@@ -35,10 +35,10 @@ export default function InvoiceItem(props) {
     <React.Fragment>
       <input type="checkbox" />
 
-      <p>{props.billCatFromApp.name}</p>
+      <p>{props.billCatFromApp.cat_name}</p>
 
       <input
-        name="rate"
+        name={"rate-" + props.billCatFromApp.ID}
         type="number"
         min="0"
         step="0.5"

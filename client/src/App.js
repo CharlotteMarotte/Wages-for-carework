@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
-
 import Navbar from './components/Navbar';
 import HomeView from './views/Homeview';
 import AboutView from './views/AboutView';
@@ -9,54 +8,65 @@ import CreateInvoiceView from './views/CreateInvoiceView';
 import InvoiceDocView from './views/InvoiceDocView';
 import Error404View from './views/Error404View';
 
-const BILL_CATEGORIES = [
-  {
-    id: 1,
-    name: 'Child care',
-  },
-  { id: 2, name: 'Cooking' },
-  { id: 3, name: 'Cleaning' },
-  { id: 4, name: 'Shopping' },
-  { id: 5, name: 'Transport' },
-  { id: 6, name: 'Care (other)' },
-  { id: 7, name: 'Emotional labor' },
-];
-
-const INVOICE_Data = [{}];
-
 function App() {
   //
   // Declare state/reactive variables with initial values
   //
   const navigate = useNavigate();
+  let [billCats, setBillCats] = useState([]);
+
 
   //
   // Declare funcs used in this component
   //
+
+  useEffect(() => {
+    getBillCats();
+  }, []);
+
+  async function getBillCats() {
+    try {
+      let response = await fetch('/bill-cats'); // does GET by default
+      if (response.ok) {
+        let categories = await response.json();
+        setBillCats(categories);
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
+
+
+
   function showInvoiceDoc() {
     navigate('/invoice'); // redirect to /users
   }
 
   return (
     <div className="App">
-
       <Navbar />
-
       <Routes>
-        <Route path="/" element={<HomeView />} />
+        <Route path="/" element={<HomeView billCatFromApp={billCats} />} />
         <Route path="about" element={<AboutView />} />
         <Route
           path="create"
           element={
             <CreateInvoiceView
-              billCatFromApp={BILL_CATEGORIES}
+              billCatFromApp={billCats}
               showInvoiceDocCb={showInvoiceDoc}
             />
           }
         />
         <Route
           path="invoice"
-          element={<InvoiceDocView billCatFromApp={BILL_CATEGORIES} />}
+          element={
+            <InvoiceDocView
+              billCatFromApp={billCats}
+    
+            />
+          }
         />
         <Route path="*" element={<Error404View />} />
       </Routes>

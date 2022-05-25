@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { setState, useState } from 'react';
 import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
 
@@ -12,11 +12,32 @@ const EMPTY_FORM = {
   emailRecipient: '',
 };
 
+
 export default function CreateInvoiceView(props) {
   const [contactData, setContactData] = useState(EMPTY_FORM);
+  const [invoiceItems, setInvoiceItems] = useState([]);
   const [amount, setAmount] = useState(0);
 
+  const EMPTY_IT_FORM = props.billCatFromApp.map(c => ({CatId: c.ID, rate: 0, hours: 0})) 
 
+
+  const addInvoiceItem = (e) => {
+    let temp = { ...invoiceItems };
+    temp.invoiceItems.push({
+      id: 0,
+      quantity: 0,
+      rate: 0,
+    });
+    setInvoiceItems(temp);
+  };
+
+  // which category is it
+  //  which of the two fields
+  // find for cat ID in my invoiceItems arr
+  // either update rate or hours
+  // Cb for two arguments
+
+  // name.split(-)
   // gets called every time a key is pressed
   const handleInputChange = (event) => {
     let { name, value } = event.target;
@@ -28,6 +49,16 @@ export default function CreateInvoiceView(props) {
     }));
   };
 
+
+  // Look up nested objects to change React states
+
+  // const handleIntInputChange = (event) => {
+  //   setContactData((state) => ({
+  //     ...state, // gets replaced by all key-value pairs from obj
+  //     [name]: {[name]: value}, // updates key [name] with new value
+  //   }));
+  // }
+
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,7 +68,6 @@ export default function CreateInvoiceView(props) {
     //   props.addProject(project);
     // empty form after set
     setContactData(EMPTY_FORM);
-    props.showInvoiceDocCb();
   };
 
   //   need to call this in InvoiceItem

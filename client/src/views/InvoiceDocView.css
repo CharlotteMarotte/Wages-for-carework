@@ -22,3 +22,7 @@
 .InvoiceDocView p {
   text-align: right;
 }
+
+.InvoiceDocItems li {
+  list-style: none;
+}
