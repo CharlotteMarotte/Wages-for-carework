@@ -38,6 +38,9 @@ function App() {
     }
   }
 
+  function addInvoice(invoice, invoiceItemsArr){
+    console.log("Submit from Form made it to the App");
+  }
 
 
   function showInvoiceDoc() {
@@ -56,6 +59,7 @@ function App() {
             <CreateInvoiceView
               billCatFromApp={billCats}
               showInvoiceDocCb={showInvoiceDoc}
+              addInvoiceCb={addInvoice}
             />
           }
         />

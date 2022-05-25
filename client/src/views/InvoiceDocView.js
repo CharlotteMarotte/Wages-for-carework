@@ -40,7 +40,7 @@ export default function InvoiceDocView(props) {
   }
 
   if (!invoices.length || !invoiceItems.length ) {
-    return <div>Test</div>;
+    return <div>Waiting...</div>;
   }
   return (
     <div>

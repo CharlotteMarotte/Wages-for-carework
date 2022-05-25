@@ -15,3 +15,6 @@ width: 40%
     line-height: 2px;
 }
 
+.inActive{
+    color: gray;
+}

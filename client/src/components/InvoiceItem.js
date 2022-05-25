@@ -2,59 +2,53 @@ import React, { useState } from 'react';
 
 import './InvoiceItem.css';
 
-const EMPTY_FORM = {
-  rate: 0,
-  quantity: 0,
-};
-
 export default function InvoiceItem(props) {
-  const [invoiceData, setInvoiceData] = useState(EMPTY_FORM);
+  const [checked, setChecked] = useState(true);
 
-  // gets called every time a key is pressed
-  const handleInputChange = (event) => {
-    let { name, value } = event.target;
+  const ix = props.invoiceItemsFromApp.findIndex(
+    (i) => i.CatId === props.billCatFromApp.ID
+  );
 
-    // gets pressed after each key change
-    setInvoiceData((state) => ({
-      ...state, // gets replaced by all key-value pairs from obj
-      [name]: value, // updates key [name] with new value
-    }));
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
   };
 
-  // gets called when submit gets pressed
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('form button clicked!');
-    // pass data back up to parent using props.addProject();
-    //   props.addProject(project);
-    // empty form after set
-    setInvoiceData(EMPTY_FORM);
-  };
+
 
   return (
     <React.Fragment>
-      <input type="checkbox" />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={handleCheckboxChange}
+      />
 
-      <p>{props.billCatFromApp.cat_name}</p>
+      <p className={checked ? '' : 'inActive'}>
+        {props.billCatFromApp.cat_name}
+      </p>
 
       <input
-        name={"rate-" + props.billCatFromApp.ID}
+        disabled={!checked}
+        name={'rate-' + props.billCatFromApp.ID}
         type="number"
-        min="0"
+        min="9.5"
         step="0.5"
-        value={invoiceData.rate}
-        onChange={(e) => handleInputChange(e)}
+        value={props.invoiceItemsFromApp[ix].rate}
+        onChange={props.addInvoiceItemCb}
       />
 
       <input
-        name="quantity"
+        disabled={!checked}
+        name={'hours-' + props.billCatFromApp.ID}
         type="number"
         min="0"
-        value={invoiceData.quantity}
-        onChange={(e) => handleInputChange(e)}
+        value={props.invoiceItemsFromApp[ix].hours}
+        onChange={props.addInvoiceItemCb}
       />
 
-      <p>{invoiceData.rate * invoiceData.quantity}</p>
+      <p className={checked ? '' : 'inActive'}>
+        {props.invoiceItemsFromApp[ix].amount}
+      </p>
     </React.Fragment>
   );
 }

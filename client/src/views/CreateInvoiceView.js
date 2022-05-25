@@ -6,38 +6,42 @@ const EMPTY_FORM = {
   nameSender: '',
   emailSender: '',
   invoiceNumber: 0,
-  date: undefined,
+  date: new Date().toJSON().slice(0, 10), //gets current date
   terms: '',
   nameRecipient: '',
   emailRecipient: '',
 };
 
-
 export default function CreateInvoiceView(props) {
+  const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
+    CatId: c.ID,
+    rate: 0,
+    hours: 0,
+    amount: 0,
+  }));
+
   const [contactData, setContactData] = useState(EMPTY_FORM);
-  const [invoiceItems, setInvoiceItems] = useState([]);
+  const [invoiceItems, setInvoiceItems] = useState(EMPTY_IT_FORM);
   const [amount, setAmount] = useState(0);
 
-  const EMPTY_IT_FORM = props.billCatFromApp.map(c => ({CatId: c.ID, rate: 0, hours: 0})) 
-
-
-  const addInvoiceItem = (e) => {
-    let temp = { ...invoiceItems };
-    temp.invoiceItems.push({
-      id: 0,
-      quantity: 0,
-      rate: 0,
-    });
-    setInvoiceItems(temp);
-  };
-
-  // which category is it
-  //  which of the two fields
-  // find for cat ID in my invoiceItems arr
-  // either update rate or hours
   // Cb for two arguments
 
-  // name.split(-)
+  // gets called every time number input field is updated
+  const addInvoiceItem = (event) => {
+    // returns rate or hour, split method returns array of strings so need to transform into Num
+    let name = event.target.name.split('-')[0];
+    let value = Number(event.target.value);
+
+    let newArray = [...invoiceItems];
+    let ix = newArray.findIndex(
+      (i) => i.CatId === Number(event.target.name.split('-')[1])
+    );
+    newArray[ix][name] = value;
+    newArray[ix].amount = newArray[ix].rate * newArray[ix].hours;
+    setInvoiceItems((state) => newArray);
+    calcAmount();
+  };
+
   // gets called every time a key is pressed
   const handleInputChange = (event) => {
     let { name, value } = event.target;
@@ -49,30 +53,20 @@ export default function CreateInvoiceView(props) {
     }));
   };
 
-
-  // Look up nested objects to change React states
-
-  // const handleIntInputChange = (event) => {
-  //   setContactData((state) => ({
-  //     ...state, // gets replaced by all key-value pairs from obj
-  //     [name]: {[name]: value}, // updates key [name] with new value
-  //   }));
-  // }
-
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.showInvoiceDocCb();
-    console.log('form button clicked!');
-    // pass data back up to parent using props.addProject();
-    //   props.addProject(project);
+    props.addInvoiceCb(contactData, invoiceItems); // pass data back up to parent using props.addInvoiceCb();
+    props.showInvoiceDocCb(); // show created invoice
     // empty form after set
     setContactData(EMPTY_FORM);
   };
 
   //   need to call this in InvoiceItem
-  function calcAmount(newAmount) {
-    let result = amount + newAmount;
+  function calcAmount() {
+    let result = invoiceItems.reduce(function (total, currentValue) {
+      return total + currentValue.amount;
+  }, 0);
     setAmount(result);
   }
 
@@ -146,7 +140,7 @@ export default function CreateInvoiceView(props) {
             <p> </p>
             <p>Description</p>
             <p>Rate</p>
-            <p>Quantity</p>
+            <p>Hours</p>
             <p>Amount</p>
           </div>
           <div className="seperator"></div>
@@ -154,7 +148,12 @@ export default function CreateInvoiceView(props) {
           <div className="InvoiceItem">
             {props.billCatFromApp.map((p, index) => (
               // arrow function, so it doesn't get called immediately but only after a click
-              <InvoiceItem key={index} billCatFromApp={p} />
+              <InvoiceItem
+                key={p.ID}
+                billCatFromApp={p}
+                addInvoiceItemCb={addInvoiceItem}
+                invoiceItemsFromApp={invoiceItems}
+              />
             ))}
           </div>
           <p>Total: {amount} €</p>
