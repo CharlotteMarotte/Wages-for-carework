@@ -77,6 +77,12 @@ export default function CreateInvoiceView(props) {
     setTotal(result);
   }
 
+  // || !contactData.length if this gets added it doesn't show form
+  if (!invoiceItems.length || !props.billCatFromApp.length ) {
+    // if (!currInvoice.length || !props.billCatFromApp.length) {
+    return <div>Waiting for data to load...</div>;
+  }
+
   return (
     <div className="CreateInvoiceView">
       {/* add handleSubmit function to onSubmit event */}

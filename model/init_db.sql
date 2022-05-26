@@ -32,6 +32,7 @@ CREATE TABLE invoice_items (
     fk_categoriesID INT NOT NULL,
     hour INT NOT NULL,
     rate INT NOT NULL,
+    amount INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (fk_invoiceID) REFERENCES invoices(id) ON DELETE CASCADE,
     FOREIGN KEY (fk_categoriesID) REFERENCES categories(id) ON DELETE CASCADE
@@ -76,41 +77,100 @@ VALUES
     );
 
 INSERT INTO
-    invoice_Items (fk_invoiceId, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceId,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 1, 0, 0);
+    (1, 1, 0, 0, 0);
 
 INSERT INTO
-    invoice_Items (fk_invoiceId, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceId,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 2, 3, 15);
+    (1, 2, 3, 15, 45);
 
 INSERT INTO
-    invoice_Items (fk_invoiceId, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceId,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 3, 3, 15);
+    (1, 3, 3, 15, 45);
 
 INSERT INTO
-    invoice_Items (fk_invoiceID, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 4, 3, 15);
+    (1, 4, 3, 15, 45);
 
 INSERT INTO
-    invoice_Items (fk_invoiceID, fk_categoriesID, hour, rate)
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesID,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 5, 3, 5);
+    (1, 5, 3, 5, 15);
 
 INSERT INTO
-    invoice_Items (fk_invoiceID, fk_categoriesID, hour, rate)
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesID,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 6, 3, 5);
+    (1, 6, 3, 5, 15);
 
 INSERT INTO
-    invoice_Items (fk_invoiceID, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 7, 3, 5);
+    (1, 7, 3, 5, 15);
 
 INSERT INTO
-    invoice_Items (fk_invoiceID, fk_categoriesId, hour, rate)
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
 VALUES
-    (1, 8, 3, 5);
+    (1, 8, 3, 5, 15);
+
+INSERT INTO
+    invoice_Items (
+        fk_invoiceID,
+        fk_categoriesId,
+        hour,
+        rate,
+        amount
+    )
+VALUES
+    (1, 9, 10, 4, 40);

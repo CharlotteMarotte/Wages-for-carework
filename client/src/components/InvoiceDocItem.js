@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 
 import './InvoiceDocItem.css';
 
-export default function InvoiceDocItem() {
+export default function InvoiceDocItem(props) {
   return (
     <>
-      <p>Description</p>
-      <p>Rate</p>
-      <p>Quantity</p>
-      <p>Amount</p>
+      <p>{props.invoiceFromDoc.category}</p>
+      <p>{props.invoiceFromDoc.rate}</p>
+      <p>{props.invoiceFromDoc.hours}</p>
+      <p>{props.invoiceFromDoc.amount}</p>
     </>
   );
 }

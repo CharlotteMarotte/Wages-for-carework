@@ -102,7 +102,8 @@ function App() {
           element={
             <InvoiceDocView
               billCatFromApp={billCats}
-              invoicesFromApp={invoices}
+              ix={invoices.length-1}
+              invoicesFromApp={invoices[invoices.length-1]}
               getInvoicesCb={getInvoices}
             />
           }
