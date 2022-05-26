@@ -14,7 +14,7 @@ function App() {
   //
   const navigate = useNavigate();
   let [billCats, setBillCats] = useState([]);
-
+  let [invoices, setInvoices] = useState([]);
 
   //
   // Declare funcs used in this component
@@ -22,7 +22,46 @@ function App() {
 
   useEffect(() => {
     getBillCats();
+    getInvoices();
   }, []);
+
+  async function getInvoices() {
+    try {
+      let response = await fetch('/invoices'); // does GET by default
+      if (response.ok) {
+        let invoiceData = await response.json();
+        setInvoices(invoiceData);
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
+
+  async function addInvoice(invoiceData) {
+    // Define fetch() options
+    let options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(invoiceData),
+    };
+
+    try {
+      let response = await fetch('/invoices/new', options); // do POST
+      if (response.ok) {
+        let invoices = await response.json();
+        setInvoices(invoices);
+        getInvoices();
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
 
   async function getBillCats() {
     try {
@@ -38,20 +77,15 @@ function App() {
     }
   }
 
-  function addInvoice(invoice, invoiceItemsArr){
-    console.log("Submit from Form made it to the App");
-  }
-
-
   function showInvoiceDoc() {
-    navigate('/invoice'); // redirect to /users
+    navigate('/invoices'); // redirect to /users
   }
 
   return (
     <div className="App">
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomeView billCatFromApp={billCats} />} />
+        <Route path="/" element={<HomeView invoicesFromApp={invoices} />} />
         <Route path="about" element={<AboutView />} />
         <Route
           path="create"
@@ -64,11 +98,12 @@ function App() {
           }
         />
         <Route
-          path="invoice"
+          path="invoices"
           element={
             <InvoiceDocView
               billCatFromApp={billCats}
-    
+              invoicesFromApp={invoices}
+              getInvoicesCb={getInvoices}
             />
           }
         />

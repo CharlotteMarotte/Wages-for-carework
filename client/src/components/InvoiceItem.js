@@ -5,14 +5,14 @@ import './InvoiceItem.css';
 export default function InvoiceItem(props) {
   const [checked, setChecked] = useState(true);
 
-  const ix = props.invoiceItemsFromApp.findIndex(
-    (i) => i.CatId === props.billCatFromApp.ID
+  const index = props.invoiceItemsFromCreate.findIndex(
+    (i) => i.CatId === props.billCatFromApp.id
   );
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
+    props.setInputToZeroCb(index);
   };
-
 
 
   return (
@@ -29,25 +29,25 @@ export default function InvoiceItem(props) {
 
       <input
         disabled={!checked}
-        name={'rate-' + props.billCatFromApp.ID}
+        name={'rate-' + props.billCatFromApp.id}
         type="number"
         min="9.5"
         step="0.5"
-        value={props.invoiceItemsFromApp[ix].rate}
+        value={props.invoiceItemsFromCreate[index].rate}
         onChange={props.addInvoiceItemCb}
       />
 
       <input
         disabled={!checked}
-        name={'hours-' + props.billCatFromApp.ID}
+        name={'hours-' + props.billCatFromApp.id}
         type="number"
         min="0"
-        value={props.invoiceItemsFromApp[ix].hours}
+        value={props.invoiceItemsFromCreate[index].hours}
         onChange={props.addInvoiceItemCb}
       />
 
       <p className={checked ? '' : 'inActive'}>
-        {props.invoiceItemsFromApp[ix].amount}
+        {props.invoiceItemsFromCreate[index].amount + ' €'}
       </p>
     </React.Fragment>
   );

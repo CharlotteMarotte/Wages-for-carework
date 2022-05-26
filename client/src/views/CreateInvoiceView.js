@@ -3,28 +3,25 @@ import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
 
 const EMPTY_FORM = {
-  nameSender: '',
-  emailSender: '',
-  invoiceNumber: 0,
-  date: new Date().toJSON().slice(0, 10), //gets current date
-  terms: '',
-  nameRecipient: '',
-  emailRecipient: '',
+  nameFrom: '',
+  emailFrom: '',
+  nameTo: '',
+  emailTo: '',
+  invoiceDate: new Date().toISOString().slice(0, 10), //gets current date
 };
 
 export default function CreateInvoiceView(props) {
   const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
-    CatId: c.ID,
-    rate: 0,
+    CatId: c.id,
+    rate: 9.5,
     hours: 0,
     amount: 0,
   }));
 
   const [contactData, setContactData] = useState(EMPTY_FORM);
   const [invoiceItems, setInvoiceItems] = useState(EMPTY_IT_FORM);
-  const [amount, setAmount] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  // Cb for two arguments
 
   // gets called every time number input field is updated
   const addInvoiceItem = (event) => {
@@ -39,7 +36,7 @@ export default function CreateInvoiceView(props) {
     newArray[ix][name] = value;
     newArray[ix].amount = newArray[ix].rate * newArray[ix].hours;
     setInvoiceItems((state) => newArray);
-    calcAmount();
+    calcTotal();
   };
 
   // gets called every time a key is pressed
@@ -50,24 +47,34 @@ export default function CreateInvoiceView(props) {
     setContactData((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
+      invoiceItems
     }));
+  };
+
+  const setInputToZero = (index) => {
+    let newArray = [...invoiceItems];
+    newArray[index].hours = 0;
+    newArray[index].rate = 0;
+    newArray[index].amount = 0;
+    setInvoiceItems((state) => newArray);
+    calcTotal();
   };
 
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.addInvoiceCb(contactData, invoiceItems); // pass data back up to parent using props.addInvoiceCb();
+    props.addInvoiceCb(contactData); // pass data back up to parent using props.addInvoiceCb();
     props.showInvoiceDocCb(); // show created invoice
     // empty form after set
     setContactData(EMPTY_FORM);
   };
 
   //   need to call this in InvoiceItem
-  function calcAmount() {
+  function calcTotal() {
     let result = invoiceItems.reduce(function (total, currentValue) {
       return total + currentValue.amount;
-  }, 0);
-    setAmount(result);
+    }, 0);
+    setTotal(result);
   }
 
   return (
@@ -79,18 +86,18 @@ export default function CreateInvoiceView(props) {
           <label>
             Name
             <input
-              name="nameSender"
+              name="nameFrom"
               type="text"
-              value={contactData.nameSender}
+              value={contactData.nameFrom}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
           <label>
             Email
             <input
-              name="emailSender"
+              name="emailFrom"
               type="text"
-              value={contactData.emailSender}
+              value={contactData.emailFrom}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
@@ -98,9 +105,9 @@ export default function CreateInvoiceView(props) {
           <label>
             Name
             <input
-              name="nameRecipient"
+              name="nameTo"
               type="text"
-              value={contactData.nameRecipient}
+              value={contactData.nameTo}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
@@ -108,29 +115,19 @@ export default function CreateInvoiceView(props) {
         <label>
           Email
           <input
-            name="emailRecipient"
+            name="emailTo"
             type="text"
-            value={contactData.emailRecipient}
+            value={contactData.emailTo}
             onChange={(e) => handleInputChange(e)}
           />
         </label>
         <p>INVOICE</p>
         <label>
-          Invoice Number
-          <input
-            name="invoiceNumber"
-            type="number"
-            min="0"
-            value={contactData.invoiceNumber}
-            onChange={(e) => handleInputChange(e)}
-          />
-        </label>
-        <label>
           Date
           <input
-            name="date"
+            name="invoiceDate"
             type="date"
-            value={contactData.date}
+            value={contactData.invoiceDate}
             onChange={(e) => handleInputChange(e)}
           />
         </label>
@@ -149,14 +146,15 @@ export default function CreateInvoiceView(props) {
             {props.billCatFromApp.map((p, index) => (
               // arrow function, so it doesn't get called immediately but only after a click
               <InvoiceItem
-                key={p.ID}
+                key={p.id}
                 billCatFromApp={p}
                 addInvoiceItemCb={addInvoiceItem}
-                invoiceItemsFromApp={invoiceItems}
+                invoiceItemsFromCreate={invoiceItems}
+                setInputToZeroCb={setInputToZero}
               />
             ))}
           </div>
-          <p>Total: {amount} €</p>
+          <p>Total: {total} €</p>
 
           <button type="submit">Submit</button>
         </div>

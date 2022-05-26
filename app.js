@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var CategoriesRouter = require('./routes/Categories');
-var InvoiceRouter = require('./routes/Invoice');
+var InvoiceRouter = require('./routes/Invoices');
 var InvoiceItemsRouter = require('./routes/Invoice_Items');
 
 
@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/bill-cats', CategoriesRouter);
-app.use('/invoice', InvoiceRouter);
+app.use('/invoices', InvoiceRouter);
 app.use('/invoice-items', InvoiceItemsRouter);
 
 module.exports = app;

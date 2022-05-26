@@ -13,11 +13,7 @@ function HomeView(props) {
         Revolution at Point Zero: Housework, Reproduction, and Feminist Struggle
       </p>
 
-      <ul>
-        {props.billCatFromApp.map((c) => (
-          <li key={c.ID}>{c.cat_name}</li>
-        ))}
-      </ul>
+      <p>Currently {props.invoicesFromApp.length} invoices have been created!</p>
     </div>
   );
 }
