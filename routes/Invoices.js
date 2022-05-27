@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 const db = require('../model/helper');
 
-let catAmt = 9;
-let lastInvoiceID = 1;
+let catAmt = 0;
+let lastInvoiceID = 0;
 
 async function getCatAmt() {
   try {
@@ -12,7 +12,6 @@ async function getCatAmt() {
     let results = await db(sql);
     catAmt = results.data[0].total;
     // here catAmt is 9
-    console.log(catAmt);
   } catch (error) {
     res.status(500).send({ error: err.message });
   }
@@ -24,16 +23,14 @@ async function getLastInvoiceID() {
     let sql = `SELECT MAX(id) AS lastID FROM invoices;`;
     let results = await db(sql);
     lastInvoiceID = results.data[0].lastID;
-    console.log('inside', lastInvoiceID);
   } catch (error) {
     res.status(500).send({ error: err.message });
   }
 }
 
 // Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
-function joinToJson(results) {
-  getCatAmt();
-  // here catAmt is 0
+async function joinToJson(results) {
+  await getCatAmt();
   console.log(catAmt);
   // send back length of categories table
   let resultInvoices = [];
@@ -71,7 +68,7 @@ function joinToJson(results) {
   return resultInvoices;
 }
 
-function joinLastInvoiceToJson(results) {
+async function joinLastInvoiceToJson(results) {
   // Get first row
   let row0 = results.data[0];
 
@@ -98,21 +95,22 @@ function joinLastInvoiceToJson(results) {
 }
 
 router.get('/', (req, res) => {
+
   // Send back the full list of items
   db(`SELECT i.*, iIt.hour,  iIt.rate, iIT.amount, c.cat_name
   FROM invoices AS i
   INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
   INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY id ASC;`)
-    .then((results) => {
+    .then(async (results)=> {
       let invoice = results.data;
-      invoice = joinToJson(invoice);
+      invoice = await joinToJson(invoice);
       res.send(invoice);
     })
     .catch((err) => res.status(500).send(err));
 });
 
 router.get('/last-invoice', async function (req, res) {
-  getLastInvoiceID();
+  await getLastInvoiceID();
   // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT i.*, iIt.hour,  iIt.rate, iIt.amount, c.cat_name
@@ -122,7 +120,7 @@ router.get('/last-invoice', async function (req, res) {
     WHERE i.id = ${lastInvoiceID};`;
     let results = await db(sql);
     // Convert DB results into "sensible" JSON
-    invoice = joinLastInvoiceToJson(results);
+    invoice = await joinLastInvoiceToJson(results);
     res.status(200).send(invoice);
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -131,7 +129,6 @@ router.get('/last-invoice', async function (req, res) {
 
 router.get('/:id/total', async function (req, res) {
   let id = Number(req.params.id);  
-  console.log(id);
   // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT SUM (amount) total FROM invoice_items WHERE fk_invoiceID = ${id};`;

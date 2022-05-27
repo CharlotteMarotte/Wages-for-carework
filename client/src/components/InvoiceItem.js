@@ -14,13 +14,15 @@ export default function InvoiceItem(props) {
     props.setInputToZeroCb(index);
   };
 
-
   return (
     <React.Fragment>
       <input
         type="checkbox"
         checked={checked}
         onChange={handleCheckboxChange}
+        class="form-check-input"
+        value=""
+        id="flexCheckDefault"
       />
 
       <p className={checked ? '' : 'inActive'}>
@@ -29,7 +31,9 @@ export default function InvoiceItem(props) {
 
       <input
         disabled={!checked}
+        className="form-control"
         name={'rate-' + props.billCatFromApp.id}
+        aria-describedby="emailHelp"
         type="number"
         min="9.5"
         step="0.5"
@@ -39,6 +43,8 @@ export default function InvoiceItem(props) {
 
       <input
         disabled={!checked}
+        className="form-control"
+        aria-describedby="emailHelp"
         name={'hours-' + props.billCatFromApp.id}
         type="number"
         min="0"

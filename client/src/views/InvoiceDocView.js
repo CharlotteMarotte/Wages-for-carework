@@ -3,7 +3,7 @@ import './InvoiceDocView.css';
 import InvoiceDocItem from '../components/InvoiceDocItem';
 
 export default function InvoiceDocView(props) {
-  let [currInvoice, setCurrInvoice] = useState([]);
+  let [currInvoice, setCurrInvoice] = useState(null);
   let [total, setTotal] = useState(props.ix);
 
   useEffect(() => {
@@ -18,7 +18,6 @@ export default function InvoiceDocView(props) {
       if (response.ok) {
         let invoiceData = await response.json();
         setCurrInvoice(invoiceData);
-        // console.log(currInvoice);
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -42,8 +41,7 @@ export default function InvoiceDocView(props) {
     }
   }
 
-  if (!props.invoicesFromApp || !props.billCatFromApp.length) {
-    // if (!currInvoice.length || !props.billCatFromApp.length) {
+  if (!currInvoice || !props.billCatFromApp.length) {
       return <div>Waiting for data to load...</div>;
     }
   return (
@@ -51,18 +49,18 @@ export default function InvoiceDocView(props) {
       <div className="InvoiceDocView">
         <div className="seperatorDoc"></div>
         <p>
-          FROM: {props.invoicesFromApp.nameFrom}{' '}
-          {props.invoicesFromApp.emailFrom}
-          {/* FROM: {currInvoice.nameFrom}{' '}
-          {currInvoice.emailFrom} */}
+          {/* FROM: {props.invoicesFromApp.nameFrom}{' '}
+          {props.invoicesFromApp.emailFrom} */}
+          FROM: {currInvoice.nameFrom}{' '}
+          {currInvoice.emailFrom}
         </p>
         <p>
-          TO: {props.invoicesFromApp.nameTo} {props.invoicesFromApp.emailTo}
-          {/* TO: {currInvoice.nameTo}{' '}
-          {currInvoice.emailTo} */}
+          {/* TO: {props.invoicesFromApp.nameTo} {props.invoicesFromApp.emailTo} */}
+          TO: {currInvoice.nameTo}{' '}
+          {currInvoice.emailTo}
         </p>
-        <p>INVOICE DATE: {props.invoicesFromApp.invoiceDate.slice(0, 10)} </p>
-        {/* <p>INVOICE DATE: {currInvoice.invoiceDate} </p> */}
+        {/* <p>INVOICE DATE: {props.invoicesFromApp.invoiceDate.slice(0, 10)} </p> */}
+        <p>INVOICE DATE: {currInvoice.invoiceDate} </p>
         <div className="InvoiceDocView"></div>
         <div className="InvoiceDocGrid">
           <p>Description</p>
@@ -71,7 +69,7 @@ export default function InvoiceDocView(props) {
           <p>Amount</p>
         </div>
         <div className="InvoiceDocItems">
-          {props.invoicesFromApp.invoiceItems.map((i) => (
+          {currInvoice.invoiceItems.map((i) => (
             // arrow function, so it doesn't get called immediately but only after a click
             <InvoiceDocItem
               key={i.id}

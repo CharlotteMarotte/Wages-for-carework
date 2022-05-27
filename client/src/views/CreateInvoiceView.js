@@ -11,13 +11,14 @@ const EMPTY_FORM = {
 };
 
 export default function CreateInvoiceView(props) {
+
   const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
     CatId: c.id,
     rate: 9.5,
     hours: 0,
     amount: 0,
   }));
-
+  
   const [contactData, setContactData] = useState(EMPTY_FORM);
   const [invoiceItems, setInvoiceItems] = useState(EMPTY_IT_FORM);
   const [total, setTotal] = useState(0);
@@ -78,7 +79,7 @@ export default function CreateInvoiceView(props) {
   }
 
   // || !contactData.length if this gets added it doesn't show form
-  if (!invoiceItems.length || !props.billCatFromApp.length ) {
+  if (!invoiceItems.length || !props.billCatFromApp.length || !contactData ) {
     // if (!currInvoice.length || !props.billCatFromApp.length) {
     return <div>Waiting for data to load...</div>;
   }
@@ -89,49 +90,59 @@ export default function CreateInvoiceView(props) {
       <form onSubmit={handleSubmit}>
         <div>
           <p className="Addressants">FROM</p>
-          <label>
+          <label className="form-label">
             Name
             <input
               name="nameFrom"
+              className="form-control"
+              aria-describedby="emailHelp" 
               type="text"
               value={contactData.nameFrom}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
-          <label>
+          <label className="form-label">
             Email
             <input
               name="emailFrom"
+              className="form-control"
+              aria-describedby="emailHelp" 
               type="text"
               value={contactData.emailFrom}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
           <p className="Addressants">TO</p>
-          <label>
+          <label className="form-label">
             Name
             <input
               name="nameTo"
+              className="form-control"
+              aria-describedby="emailHelp" 
               type="text"
               value={contactData.nameTo}
               onChange={(e) => handleInputChange(e)}
             />
           </label>
         </div>
-        <label>
+        <label className="form-label">
           Email
           <input
             name="emailTo"
+            className="form-control"
+            aria-describedby="emailHelp" 
             type="text"
             value={contactData.emailTo}
             onChange={(e) => handleInputChange(e)}
           />
         </label>
         <p>INVOICE</p>
-        <label>
+        <label className="form-label">
           Date
           <input
             name="invoiceDate"
+            className="form-control"
+            aria-describedby="emailHelp" 
             type="date"
             value={contactData.invoiceDate}
             onChange={(e) => handleInputChange(e)}
@@ -162,7 +173,7 @@ export default function CreateInvoiceView(props) {
           </div>
           <p>Total: {total} €</p>
 
-          <button type="submit">Submit</button>
+          <button type="submit" className="btn btn-primary me-2">Submit</button>
         </div>
       </form>
     </div>
