@@ -7,6 +7,8 @@ import AboutView from './views/AboutView';
 import CreateInvoiceView from './views/CreateInvoiceView';
 import InvoiceDocView from './views/InvoiceDocView';
 import Error404View from './views/Error404View';
+import StatisticsView from './views/StatisticsView';
+import EnterDataView from './views/EnterDataView';
 
 function App() {
   //
@@ -87,6 +89,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeView invoicesFromApp={invoices} />} />
         <Route path="about" element={<AboutView />} />
+        <Route path="enter-data" element={<EnterDataView />} />
         <Route
           path="create"
           element={
@@ -94,6 +97,7 @@ function App() {
               billCatFromApp={billCats}
               showInvoiceDocCb={showInvoiceDoc}
               addInvoiceCb={addInvoice}
+              nextId={invoices.length + 1}
             />
           }
         />
@@ -102,12 +106,21 @@ function App() {
           element={
             <InvoiceDocView
               billCatFromApp={billCats}
-              ix={invoices.length-1}
-              invoicesFromApp={invoices[invoices.length-1]}
+              ix={invoices.length - 1}
               getInvoicesCb={getInvoices}
             />
           }
         />
+        <Route
+          path="statistics"
+          element={
+            <StatisticsView
+              invoicesFromApp={invoices}
+              billCatsFromApp={billCats}
+            />
+          }
+        />
+        <Route path="*" element={<Error404View />} />
         <Route path="*" element={<Error404View />} />
       </Routes>
     </div>

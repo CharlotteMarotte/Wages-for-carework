@@ -1,28 +1,7 @@
-.seperatorDoc {
-  border-bottom: 3px solid red;
+.InvoiceDocView .Date p {
+  display: inline;
 }
 
-.InvoiceDocView {
-  width: 700px;
-}
-
-.InvoiceDocGrid {
-  /* if width is changed it also needs to be changed in .InvoiceDocItems */
-  width: 700px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-}
-.InvoiceDocItems {
-  /* if width is changed it also needs to be changed in .InvoiceDocGrid */
-  width: 700px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-}
-
-.InvoiceDocView p {
-  text-align: right;
-}
-
-.InvoiceDocItems li {
-  list-style: none;
+.InvoiceDocView .Date h3 {
+  display: inline;
 }

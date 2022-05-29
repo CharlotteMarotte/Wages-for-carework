@@ -12,19 +12,3 @@
   text-align: center;
 }
 
-.App nav{
-  text-align: center;
-  cursor: pointer;
-  font-size: 40px;
-}
-
-#createButton {
-  font-size: 3em;
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 20px;
-  display: block;
-  margin: 50px auto;
-  cursor: pointer;
-}

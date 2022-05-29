@@ -61,6 +61,16 @@ async function joinToJson(results) {
       nameTo: row.nameTo,
       emailTo: row.emailTo,
       invoiceDate: row.invoiceDate,
+      amt_householdMem: row.amt_householdMem,
+      amt_children0_6: row.amt_children0_6,
+      amt_children7_18: row.amt_children7_18,
+      amt_flatmates: row.amt_flatmates,
+      amt_partners: row.amt_partners,
+      otherCaringResp: row.otherCaringResp,
+      partner_sexualOrient: row.partner_sexualOrient,
+      partner_relStyle: row.partner_relStyle,
+      employment_status: row.employment_status,
+      domesticHelp: row.domesticHelp,
       invoiceItems,
     };
     resultInvoices.push(invoice);
@@ -95,13 +105,13 @@ async function joinLastInvoiceToJson(results) {
 }
 
 router.get('/', (req, res) => {
-
   // Send back the full list of items
-  db(`SELECT i.*, iIt.hour,  iIt.rate, iIT.amount, c.cat_name
+  db(`SELECT i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
   FROM invoices AS i
+  INNER JOIN statistic_data AS s ON i.fk_statisticsID = s.id
   INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
-  INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY id ASC;`)
-    .then(async (results)=> {
+  INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY i.id ASC;`)
+    .then(async (results) => {
       let invoice = results.data;
       invoice = await joinToJson(invoice);
       res.send(invoice);
@@ -127,8 +137,51 @@ router.get('/last-invoice', async function (req, res) {
   }
 });
 
+router.get('/total', async function (req, res) {
+  let id = Number(req.params.id);
+  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
+  try {
+    let sql = `SELECT SUM(amount) AS total FROM invoice_items;`;
+    let results = await db(sql);
+    let total = results.data[0].total.toString();
+    // Convert DB results into "sensible" JSON
+    res.status(200).send(total);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.get('/total-hours', async function (req, res) {
+  let id = Number(req.params.id);
+  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
+  try {
+    let sql = `SELECT SUM(hour) AS total FROM invoice_items;`;
+    let results = await db(sql);
+    let total = results.data[0].total.toString();
+    // Convert DB results into "sensible" JSON
+    res.status(200).send(total);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.get('/average/:catID', async function (req, res) {
+  let catID = Number(req.params.catID);
+  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
+  try {
+    let sql = `SELECT c.cat_name AS catName, AVG(hour) AS avgHour, AVG(rate) AS avgRate, AVG(amount) AS avgAmount 
+    FROM invoice_items AS iIt INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE fk_categoriesID=${catID};`;
+    let results = await db(sql);
+    let averages = results.data[0];
+    // Convert DB results into "sensible" JSON
+    res.status(200).send(averages);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
 router.get('/:id/total', async function (req, res) {
-  let id = Number(req.params.id);  
+  let id = Number(req.params.id);
   // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT SUM (amount) total FROM invoice_items WHERE fk_invoiceID = ${id};`;
@@ -141,16 +194,38 @@ router.get('/:id/total', async function (req, res) {
   }
 });
 
+router.get('/:id/stats', async function (req, res) {
+  let id = Number(req.params.id);
+  try {
+    let sql = `SELECT i.*, s.*
+    FROM invoices AS i
+    LEFT OUTER JOIN statistic_data AS s ON i.fk_statisticsID = s.id
+    WHERE i.id = ${id};`;
+    let results = await db(sql);
+    results = results.data[0];
+    // Convert DB results into "sensible" JSON
+    res.status(200).send(results);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
 
 router.post('/new', async function (req, res) {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of invoice properties
   // Add your code here
 
-  const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems } =
-    req.body;
-  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate) 
-                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}');
+  const {
+    nameFrom,
+    emailFrom,
+    nameTo,
+    emailTo,
+    invoiceDate,
+    invoiceItems,
+    fk_statisticsID,
+  } = req.body;
+  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate, fk_statisticsID) 
+                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', '${fk_statisticsID}');
                 SELECT LAST_INSERT_ID();`;
 
   try {

@@ -12,8 +12,6 @@ function HomeView(props) {
         the marriage market or on the wage labor market.” ― Silvia Federici,
         Revolution at Point Zero: Housework, Reproduction, and Feminist Struggle
       </p>
-
-      <p>Currently {props.invoicesFromApp.length} invoices have been created!</p>
     </div>
   );
 }

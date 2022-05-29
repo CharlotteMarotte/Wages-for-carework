@@ -1,71 +1,16 @@
-
-
-.CreateInvoiceView input {
-  margin: 10px;
-  display: inline;
+.btn {
+  color: #c41414;
+  border: 4px solid;
+  border-radius: 0px;
 }
 
-.CreateInvoiceView button[type="submit"]{
-margin: 20px auto;
-display: block;
-background-color: red;
-color: white;
-font-size: 23px;
-border: none;
-padding: 15px;
-display: block;
-cursor: pointer;
+
+#inputEmailFrom,
+#inputNameFrom,
+#inputNameTo,
+#inputEmailTo, #inputInvoiceDate, #inputInvoiceNumber {
+  border-color: black;
+  border-width: 2px;
+  border-radius: 0px;
 }
 
-.InvoiceContent,
-.InvoiceTable {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-
-.InvoiceGrid {
-  /* if width is changed it also needs to be changed in .InvoiceItem */
-  width: 600px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-auto-rows: 50px;
-}
-
-.InvoiceItem {
-  /* if width is changed it also needs to be changed in .InvoiceGrid */
-  width: 600px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  padding-bottom: 15px;
-  margin: 0 auto;
-  grid-auto-rows: 30px;
-  grid-row-gap: 10px;
-}
-
-.InvoiceGrid p {
-  text-align: center;
-}
-
-input:focus {
-  outline: none;
-}
-
-.Addressants {
-  font-size: 25px;
-}
-
-.InvoiceInput p {
-  text-align: right;
-}
-
-.InvoiceInput {
-  margin: 15px 0;
-  width: 700px;
-  border-top: 3px solid black;
-  border-bottom: 3px solid black;
-}
-
-.seperator {
-  border-bottom: 3px solid black;
-  margin-bottom: 15px;
-}

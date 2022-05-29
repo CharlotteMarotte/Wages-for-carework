@@ -1,4 +1,4 @@
-import React, { setState, useState } from 'react';
+import React, { useState } from 'react';
 import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
 
@@ -11,18 +11,16 @@ const EMPTY_FORM = {
 };
 
 export default function CreateInvoiceView(props) {
-
   const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
     CatId: c.id,
     rate: 9.5,
     hours: 0,
     amount: 0,
   }));
-  
+
   const [contactData, setContactData] = useState(EMPTY_FORM);
   const [invoiceItems, setInvoiceItems] = useState(EMPTY_IT_FORM);
   const [total, setTotal] = useState(0);
-
 
   // gets called every time number input field is updated
   const addInvoiceItem = (event) => {
@@ -48,7 +46,9 @@ export default function CreateInvoiceView(props) {
     setContactData((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
-      invoiceItems
+      // MAKE IT THAT MY KEY APPEARS HERE
+      fk_statisticsID: 1,
+      invoiceItems,
     }));
   };
 
@@ -79,103 +79,137 @@ export default function CreateInvoiceView(props) {
   }
 
   // || !contactData.length if this gets added it doesn't show form
-  if (!invoiceItems.length || !props.billCatFromApp.length || !contactData ) {
-    // if (!currInvoice.length || !props.billCatFromApp.length) {
-    return <div>Waiting for data to load...</div>;
-  }
+  // if (!invoiceItems.length || !props.billCatFromApp.length || !contactData) {
+  //   // if (!currInvoice.length || !props.billCatFromApp.length) {
+  //   return <div>Waiting for data to load...</div>;
+  // }
 
   return (
-    <div className="CreateInvoiceView">
-      {/* add handleSubmit function to onSubmit event */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <p className="Addressants">FROM</p>
-          <label className="form-label">
-            Name
-            <input
-              name="nameFrom"
-              className="form-control"
-              aria-describedby="emailHelp" 
-              type="text"
-              value={contactData.nameFrom}
-              onChange={(e) => handleInputChange(e)}
-            />
-          </label>
-          <label className="form-label">
-            Email
-            <input
-              name="emailFrom"
-              className="form-control"
-              aria-describedby="emailHelp" 
-              type="text"
-              value={contactData.emailFrom}
-              onChange={(e) => handleInputChange(e)}
-            />
-          </label>
-          <p className="Addressants">TO</p>
-          <label className="form-label">
-            Name
-            <input
-              name="nameTo"
-              className="form-control"
-              aria-describedby="emailHelp" 
-              type="text"
-              value={contactData.nameTo}
-              onChange={(e) => handleInputChange(e)}
-            />
-          </label>
-        </div>
-        <label className="form-label">
+    // add handleSubmit function to onSubmit event
+    <div className="createInvoiceView">
+    <form className="offset-1 row g-3 col-10" onSubmit={handleSubmit}>
+      <h3>FROM</h3>
+      <div className="col-md-6">
+        <label htmlFor="inputNameFrom" className="form-label">
+          Name
+        </label>
+        <input
+          required
+          type="text"
+          name="nameFrom"
+          value={contactData.nameFrom}
+          onChange={(e) => handleInputChange(e)}
+          className="form-control"
+          id="inputNameFrom"
+        />
+      </div>
+      <div className="col-md-6">
+        <label htmlFor="inputEmailFrom" className="form-label">
           Email
-          <input
-            name="emailTo"
-            className="form-control"
-            aria-describedby="emailHelp" 
-            type="text"
-            value={contactData.emailTo}
-            onChange={(e) => handleInputChange(e)}
-          />
         </label>
-        <p>INVOICE</p>
-        <label className="form-label">
+        <input
+          required
+          type="email"
+          className="form-control"
+          id="inputEmailFrom"
+          name="emailFrom"
+          value={contactData.emailFrom}
+          onChange={(e) => handleInputChange(e)}
+        />
+      </div>
+      <h3>TO</h3>
+      <div className="col-md-6">
+        <label htmlFor="inputNameTo" className="form-label">
+          Name
+        </label>
+        <input
+          required
+          type="text"
+          className="form-control"
+          id="inputNameTo"
+          name="nameTo"
+          value={contactData.nameTo}
+          onChange={(e) => handleInputChange(e)}
+        />
+        {/* <select
+          id="inputNameTo"
+          className="form-select"
+          name="nameTo"
+          value={contactData.nameTo}
+          onChange={(e) => handleInputChange(e)}
+        >
+          <option selected>Choose...</option>
+          <option>...</option>
+        </select> */}
+      </div>
+      <div className="col-md-6">
+        <label htmlFor="inputEmailTo" className="form-label">
+          Email
+        </label>
+        <input
+          required
+          type="email"
+          className="form-control"
+          id="inputEmailTo"
+          name="emailTo"
+          value={contactData.emailTo}
+          onChange={(e) => handleInputChange(e)}
+        />
+      </div>
+      <h3>INVOICE</h3>
+      <div className="col-md-8">
+        <label htmlFor="inputInvoiceDate" className="form-label">
           Date
-          <input
-            name="invoiceDate"
-            className="form-control"
-            aria-describedby="emailHelp" 
-            type="date"
-            value={contactData.invoiceDate}
-            onChange={(e) => handleInputChange(e)}
-          />
         </label>
+        <input
+          type="date"
+          className="form-control"
+          id="inputInvoiceDate"
+          name="invoiceDate"
+          value={contactData.invoiceDate}
+          onChange={(e) => handleInputChange(e)}
+        />
+      </div>
+      <div className="offset-2 col-md-2">
+        <label htmlFor="inputInvoiceNumber" className="form-label">
+          Number
+        </label>
+        <input
+          value={props.nextId}
+          type="number"
+          className="form-control"
+          id="inputInvoiceNumber"
+          readOnly
+        />
+      </div>
 
-        <div className="InvoiceInput">
-          <div className="InvoiceGrid">
-            <p> </p>
-            <p>Description</p>
-            <p>Rate</p>
-            <p>Hours</p>
-            <p>Amount</p>
-          </div>
-          <div className="seperator"></div>
-
-          <div className="InvoiceItem">
-            {props.billCatFromApp.map((p, index) => (
-              // arrow function, so it doesn't get called immediately but only after a click
-              <InvoiceItem
-                key={p.id}
-                billCatFromApp={p}
-                addInvoiceItemCb={addInvoiceItem}
-                invoiceItemsFromCreate={invoiceItems}
-                setInputToZeroCb={setInputToZero}
-              />
-            ))}
-          </div>
-          <p>Total: {total} €</p>
-
-          <button type="submit" className="btn btn-primary me-2">Submit</button>
+      <div className="container col-12 border-bottom border-danger border-3 ">
+        <div className="row row-cols-12 border-bottom border-danger border-3">
+          <div className="col-1"> </div>
+          <h4 className="col">Description</h4>
+          <h4 className="col-2">Rate</h4>
+          <h4 className="col-2">Hours</h4>
+          <h4 className="col-2">Amount</h4>
         </div>
-      </form>
+        {invoiceItems ? 
+          props.billCatFromApp.map((p) => (
+            // arrow function, so it doesn't get called immediately but only after a click
+            <InvoiceItem
+              key={p.id}
+              billCatFromApp={p}
+              addInvoiceItemCb={addInvoiceItem}
+              invoiceItemsFromCreate={invoiceItems}
+              setInputToZeroCb={setInputToZero}
+            />
+          )) : <p>A problem occured.</p>}
+      </div>
+      <p className="offset-10">Total: {total} €</p>
+      <div className="offset-5">
+        <button type="submit" className="btn btn-outline-danger outline-2 pmd-ripple-effect">
+          Submit
+        </button>
+      </div>
+    </form>
     </div>
   );
 }
