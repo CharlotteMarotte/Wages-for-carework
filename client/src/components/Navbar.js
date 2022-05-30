@@ -56,8 +56,13 @@ function Navbar() {
                   </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink to="/statistics" className="nav-link mx-2">
+                  <NavLink to="/general-statistics" className="nav-link mx-2">
                     <i className="fas fa-plus-circle pe-2"></i>Statistics
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink to="/specific-statistics" className="nav-link mx-2">
+                    <i className="fas fa-plus-circle pe-2"></i>Special Statistics
                   </NavLink>
                 </li>
               </ul>

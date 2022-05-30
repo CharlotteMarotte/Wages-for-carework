@@ -128,6 +128,7 @@ router.get('/last-invoice', async function (req, res) {
     LEFT OUTER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
     LEFT OUTER  JOIN categories AS c ON c.id = iIt.fk_categoriesID 
     WHERE i.id = ${lastInvoiceID};`;
+    
     let results = await db(sql);
     // Convert DB results into "sensible" JSON
     invoice = await joinLastInvoiceToJson(results);

@@ -7,7 +7,8 @@ import AboutView from './views/AboutView';
 import CreateInvoiceView from './views/CreateInvoiceView';
 import InvoiceDocView from './views/InvoiceDocView';
 import Error404View from './views/Error404View';
-import StatisticsView from './views/StatisticsView';
+import GeneralStatisticsView from './views/GeneralStatisticsView';
+import SpecificStatisticsView from './views/SpecificStatisticsView';
 import EnterDataView from './views/EnterDataView';
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
       if (response.ok) {
         let invoices = await response.json();
         setInvoices(invoices);
-        getInvoices();
+        console.log(invoices);
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -112,9 +113,18 @@ function App() {
           }
         />
         <Route
-          path="statistics"
+          path="general-statistics"
           element={
-            <StatisticsView
+            <GeneralStatisticsView
+              invoicesFromApp={invoices}
+              billCatsFromApp={billCats}
+            />
+          }
+        />
+        <Route
+          path="specific-statistics"
+          element={
+            <SpecificStatisticsView
               invoicesFromApp={invoices}
               billCatsFromApp={billCats}
             />
