@@ -18,6 +18,7 @@ function App() {
   const navigate = useNavigate();
   let [billCats, setBillCats] = useState([]);
   let [invoices, setInvoices] = useState([]);
+  let [statistics, setStatistics] = useState([]);
 
   //
   // Declare funcs used in this component
@@ -66,6 +67,29 @@ function App() {
     }
   }
 
+  async function addStatisticData(data) {
+    // Define fetch() options
+    let options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+
+    try {
+      let response = await fetch('/statistics/new', options); // do POST
+      if (response.ok) {
+        let statistics = await response.json();
+        setStatistics(statistics);
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
+
   async function getBillCats() {
     try {
       let response = await fetch('/bill-cats'); // does GET by default
@@ -84,13 +108,22 @@ function App() {
     navigate('/invoices'); // redirect to /users
   }
 
+  function continueFromStatistics(data) {
+    addStatisticData(data);
+    navigate('/create'); // redirect to /users
+  }
+
+
   return (
     <div className="App">
       <Navbar />
       <Routes>
         <Route path="/" element={<HomeView invoicesFromApp={invoices} />} />
         <Route path="about" element={<AboutView />} />
-        <Route path="enter-data" element={<EnterDataView />} />
+        <Route
+          path="enter-data"
+          element={<EnterDataView continueFromStatisticsCb={continueFromStatistics} />}
+        />
         <Route
           path="create"
           element={

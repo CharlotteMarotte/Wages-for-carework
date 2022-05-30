@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 var CategoriesRouter = require('./routes/Categories');
 var InvoiceRouter = require('./routes/Invoices');
-var InvoiceItemsRouter = require('./routes/Invoice_Items');
+var StatisticRouter = require('./routes/Statistics');
 
 
 var app = express();
@@ -20,6 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/bill-cats', CategoriesRouter);
 app.use('/invoices', InvoiceRouter);
-app.use('/invoice-items', InvoiceItemsRouter);
+app.use('/statistics', StatisticRouter);
 
 module.exports = app;

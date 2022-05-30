@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 
 const EMPTY_FORM = {
-  amtHouseholdMem: 0,
+  amt_HouseholdMem: 1,
   amt_children0_6: 0,
   amt_children7_18: 0,
   otherCaringResp: 0,
   amt_flatmates: 0,
   amt_partners: 0,
-  partner_sexualOrient: '',
-  partner_relStyle: '',
-  employment_status: '',
+  partner_sexualOrient: 'None',
+  partner_relStyle: 'None',
+  employment_status: 'No wage job',
   domesticHelp: false,
 };
 
-export default function EnterDataView() {
+export default function EnterDataView(props) {
   const [statData, setStatData] = useState(EMPTY_FORM);
 
   // gets called every time a key is pressed
@@ -27,19 +27,29 @@ export default function EnterDataView() {
     }));
   };
 
+  const handleIntInputChange = (event) => {
+    let name = event.target.name;
+    let value = Number(event.target.value);
+
+    // gets pressed after each key change
+    setStatData((state) => ({
+      ...state, // gets replaced by all key-value pairs from obj
+      [name]: value, // updates key [name] with new value
+    }));
+  };
+
+
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('handled stat submit', statData);
-    // props.addInvoiceCb(statData); // pass data back up to parent using props.addInvoiceCb();
-    // props.showInvoiceDocCb(); // show created invoice
+    props.continueFromStatisticsCb(statData); // pass data back up to parent using props.addInvoiceCb();
     // empty form after set
     setStatData(EMPTY_FORM);
   };
 
   return (
     <div>
-      <form className="offset-1 row g-3 col-10" onSubmit={handleSubmit}>
+      <form className="row g-3 col-6 offset-3" onSubmit={handleSubmit}>
         <h3>DEMOGRAPHIC DATA</h3>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
@@ -48,16 +58,16 @@ export default function EnterDataView() {
           <input
             required
             className="form-control"
-            name={'amtHouseholdMem'}
-            value={statData.amtHouseholdMem}
+            name={'amt_HouseholdMem'}
+            value={statData.amt_HouseholdMem}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Flatmates (Amt)
+            Of which: Flatmates (AMT)
           </label>
           <input
             required
@@ -66,12 +76,12 @@ export default function EnterDataView() {
             value={statData.amt_flatmates}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Partners (Amt)
+            Of which: Partners (AMT)
           </label>
           <input
             required
@@ -80,12 +90,12 @@ export default function EnterDataView() {
             value={statData.amt_partners}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Children 0-6 years (Amt)
+            Children 0-6 years (AMT)
           </label>
           <input
             required
@@ -94,12 +104,12 @@ export default function EnterDataView() {
             value={statData.amt_children0_6}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Children 7-18 years (Amt)
+            Children 7-18 years (AMT)
           </label>
           <input
             required
@@ -108,12 +118,12 @@ export default function EnterDataView() {
             value={statData.amt_children7_18}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Other caring respon. (Amt)
+            Caring sick/elderly (AMT)
           </label>
           <input
             required
@@ -122,11 +132,11 @@ export default function EnterDataView() {
             value={statData.otherCaringResp}
             type="number"
             min="0"
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="col-md-12">
-          Partner(s) sex. Orientation{' '}
+          Domestic Partner(s) sex. Orientation:{' '}
           <div className="form-check form-check-inline">
             <input
               type="radio"
@@ -136,7 +146,7 @@ export default function EnterDataView() {
               value="Heterosexual"
               onChange={handleInputChange}
             />
-            Heterosexual
+            Hetero
             <label className="form-check-label" htmlFor="heterosexual"></label>
           </div>
           <div className="form-check form-check-inline">
@@ -161,9 +171,21 @@ export default function EnterDataView() {
             />
             Other<label className="form-check-label" htmlFor="other"></label>
           </div>
+          <div className="form-check form-check-inline">
+            <input
+              required
+              type="radio"
+              className="form-check-input"
+              id="none"
+              name="partner_sexualOrient"
+              value="None"
+              onChange={handleInputChange}
+            />
+            None<label className="form-check-label" htmlFor="none"></label>
+          </div>
         </div>
         <div className="col-md-12">
-          Relationship Style{' '}
+          Relationship Style:{' '}
           <div className="form-check form-check-inline">
             <input
               type="radio"
@@ -199,9 +221,21 @@ export default function EnterDataView() {
             />
             Other<label className="form-check-label" htmlFor="other"></label>
           </div>
+          <div className="form-check form-check-inline">
+            <input
+              required
+              type="radio"
+              className="form-check-input"
+              id="none"
+              name="partner_relStyle"
+              value="None"
+              onChange={handleInputChange}
+            />
+            None<label className="form-check-label" htmlFor="none"></label>
+          </div>
         </div>
         <div className="col-md-12">
-          Employment status{' '}
+          Employment status:{' '}
           <div className="form-check form-check-inline">
             <input
               type="radio"
@@ -228,6 +262,7 @@ export default function EnterDataView() {
           </div>
           <div className="form-check form-check-inline">
             <input
+              required
               type="radio"
               className="form-check-input"
               id="no"
@@ -239,27 +274,28 @@ export default function EnterDataView() {
           </div>
         </div>
         <div className="col-md-12">
-          Employed domestic help{' '}
+          Employed domestic help:{' '}
           <div className="form-check form-check-inline">
             <input
               type="radio"
               className="form-check-input"
               id="true"
               name="domesticHelp"
-              value="true"
-              onChange={handleInputChange}
+              value="1"
+              onChange={handleIntInputChange}
             />
             Yes
             <label className="form-check-label" htmlFor="true"></label>
           </div>
           <div className="form-check form-check-inline">
             <input
+              required
               type="radio"
               className="form-check-input"
               id="false"
               name="domesticHelp"
-              value="false"
-              onChange={handleInputChange}
+              value="0"
+              onChange={handleIntInputChange}
             />
             No <label className="form-check-label" htmlFor="false"></label>
           </div>
@@ -269,7 +305,7 @@ export default function EnterDataView() {
             type="submit"
             className="btn btn-outline-danger outline-2 pmd-ripple-effect"
           >
-            Submit
+            Continue
           </button>
         </div>
       </form>

@@ -10,7 +10,7 @@
 ### Database Prep
 
 - Access the MySQL interface in your terminal by running `mysql -u root -p`
-- Create a new database called facebook: `create database facebook`
+- Create a new database called facebook: `create database patriarchy`
 - Add a `.env` file to the project folder of this repository containing the MySQL authentication information for MySQL user. For example:
 
 ```bash

@@ -5,8 +5,8 @@ import InvoiceItem from '../components/InvoiceItem';
 const EMPTY_FORM = {
   nameFrom: '',
   emailFrom: '',
-  nameTo: '',
-  emailTo: '',
+  nameTo: 'BFSFJ',
+  emailTo: 'info@bmfsfjservice.bund.de',
   invoiceDate: new Date().toISOString().slice(0, 10), //gets current date
 };
 
@@ -47,7 +47,6 @@ export default function CreateInvoiceView(props) {
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
       // MAKE IT THAT MY KEY APPEARS HERE
-      fk_statisticsID: 1,
       invoiceItems,
     }));
   };
@@ -55,7 +54,6 @@ export default function CreateInvoiceView(props) {
   const setInputToZero = (index) => {
     let newArray = [...invoiceItems];
     newArray[index].hours = 0;
-    newArray[index].rate = 0;
     newArray[index].amount = 0;
     setInvoiceItems((state) => newArray);
     calcTotal();
@@ -86,8 +84,8 @@ export default function CreateInvoiceView(props) {
 
   return (
     // add handleSubmit function to onSubmit event
-    <div className="createInvoiceView">
-    <form className="offset-1 row g-3 col-10" onSubmit={handleSubmit}>
+    <div className="createInvoiceView col-6 offset-3">
+    <form className="offset-1 row g-3 col-10 pb-10" onSubmit={handleSubmit}>
       <h3>FROM</h3>
       <div className="col-md-6">
         <label htmlFor="inputNameFrom" className="form-label">

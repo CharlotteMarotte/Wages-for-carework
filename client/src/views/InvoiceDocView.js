@@ -58,7 +58,7 @@ export default function InvoiceDocView(props) {
     return <div>Waiting for data to load...</div>;
   }
   return (
-    <div className="row row-cols-12 InvoiceDocView">
+    <div className="row col-6 offset-3 InvoiceDocView">
       <div className="col-3 offset-2">
         <h3>FROM:</h3>
       </div>

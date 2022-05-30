@@ -108,7 +108,7 @@ router.get('/', (req, res) => {
   // Send back the full list of items
   db(`SELECT i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
   FROM invoices AS i
-  INNER JOIN statistic_data AS s ON i.fk_statisticsID = s.id
+  INNER JOIN statistic_data AS s ON i.id = s.id
   INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
   INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY i.id ASC;`)
     .then(async (results) => {
@@ -200,7 +200,7 @@ router.get('/:id/stats', async function (req, res) {
   try {
     let sql = `SELECT i.*, s.*
     FROM invoices AS i
-    LEFT OUTER JOIN statistic_data AS s ON i.fk_statisticsID = s.id
+    LEFT OUTER JOIN statistic_data AS s ON i.id = s.id
     WHERE i.id = ${id};`;
     let results = await db(sql);
     results = results.data[0];
@@ -222,11 +222,9 @@ router.post('/new', async function (req, res) {
     nameTo,
     emailTo,
     invoiceDate,
-    invoiceItems,
-    fk_statisticsID,
-  } = req.body;
-  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate, fk_statisticsID) 
-                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', '${fk_statisticsID}');
+    invoiceItems  } = req.body;
+  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate) 
+                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}');
                 SELECT LAST_INSERT_ID();`;
 
   try {

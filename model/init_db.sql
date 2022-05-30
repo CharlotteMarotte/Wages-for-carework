@@ -35,23 +35,20 @@ CREATE TABLE statistic_data (
 
 CREATE TABLE invoices (
     id INT NOT NULL AUTO_INCREMENT,
-    fk_statisticsID INT NOT NULL,
     nameFrom varchar(255) NOT NULL,
     emailFrom varchar(255) NOT NULL,
     nameTo varchar(255) NOT NULL,
     emailTo varchar(255) NOT NULL,
     invoiceDate DATE NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_Data(id) ON DELETE CASCADE
-);
+    PRIMARY KEY (id));
 
 CREATE TABLE invoice_items (
     id INT NOT NULL AUTO_INCREMENT,
     fk_invoiceID INT NOT NULL,
     fk_categoriesID INT NOT NULL,
-    hour NUMERIC NOT NULL,
-    rate NUMERIC NOT NULL,
-    amount NUMERIC NOT NULL,
+    hour NUMERIC(10, 2) NOT NULL,
+    rate NUMERIC(10, 2)  NOT NULL,
+    amount NUMERIC(10, 2 )NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (fk_invoiceID) REFERENCES invoices(id) ON DELETE CASCADE,
     FOREIGN KEY (fk_categoriesID) REFERENCES categories(id) ON DELETE CASCADE
@@ -104,8 +101,7 @@ INSERT INTO
         emailFrom,
         nameTo,
         emailTo,
-        invoiceDate,
-        fk_statisticsID
+        invoiceDate
     )
 VALUES
     (
@@ -113,8 +109,7 @@ VALUES
         'Silvia.Federici@unimi.it',
         'Patriarchy',
         'info@patriarchy.com',
-        '2022-05-24',
-        1
+        '2022-05-24'
     );
 
 INSERT INTO
@@ -126,7 +121,7 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 1, 0, 0, 0);
+    (1, 1, 0, 15, 0);
 
 INSERT INTO
     invoice_Items (
@@ -170,7 +165,7 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 5, 3, 5, 15);
+    (1, 5, 3, 15, 45);
 
 INSERT INTO
     invoice_Items (
@@ -181,7 +176,7 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 6, 3, 5, 15);
+    (1, 6, 3, 15, 45);
 
 INSERT INTO
     invoice_Items (
@@ -192,7 +187,7 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 7, 3, 5, 15);
+    (1, 7, 3, 15, 45);
 
 INSERT INTO
     invoice_Items (
@@ -203,7 +198,7 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 8, 3, 5, 15);
+    (1, 8, 3, 15, 45);
 
 INSERT INTO
     invoice_Items (
@@ -214,4 +209,4 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 9, 10, 4, 40);
+    (1, 9, 10, 15, 150);

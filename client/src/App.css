@@ -1,14 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap');
 
 * {
   box-sizing: border-box;
+  font-family: 'Kosugi Maru', Helvetica, sans-serif;
 }
 
-.App {
-  width: 800px;
-  margin: 50px auto;
-}
-
-.App h1{
-  text-align: center;
-}
-
+.btn{
+    box-shadow: 4px 6px rgb(246, 126, 126);
+  }
