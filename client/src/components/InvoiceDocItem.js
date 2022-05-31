@@ -17,6 +17,7 @@ export default function InvoiceDocItem(props) {
       <div className="col-3">
         <p>{props.invoiceFromDoc.amount + ' €'}</p>
       </div>
+
     </>
   );
 }

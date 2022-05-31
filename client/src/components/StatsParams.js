@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 
 const EMPTY_FORM = {
-    heterosexual: false,
-    queer: false,
-    other: false,
-    none: false,
+    Heterosexual: false,
+    Queer: false,
+    Other: false,
+    None: false,
   };
   
 
 export default function StatsParams(props) {
   return (
     <form onSubmit={props.handleSubmitCb}>
-      <div className="col-6 offset-3 row">
+      <div className="row">
         <h3>Domestic Partner(s) sex. Orientation:</h3>
         <div className="row">
-          <div className="form-check col-2 offset-1">
+          <div className="form-check offset-1 col-auto">
             <input
               className="form-check-input"
               type="checkbox"
               name="heterosexual"
-              value={props.statParams.heterosexual}
+              value={props.statParams.Heterosexual}
               id="flexCheckDefault"
               onChange={props.handleInputChangeCb}
             />
@@ -27,12 +27,12 @@ export default function StatsParams(props) {
               Heterosexual{' '}
             </label>
           </div>
-          <div className="form-check col-2">
+          <div className="form-check col-auto">
             <input
               className="form-check-input"
               type="checkbox"
               name="queer"
-              value={props.statParams.queer}
+              value={props.statParams.Queer}
               id="flexCheckChecked"
               onChange={props.handleInputChangeCb}
             />
@@ -40,11 +40,11 @@ export default function StatsParams(props) {
               Queer{' '}
             </label>
           </div>
-          <div className="form-check col-2">
+          <div className="form-check col-auto">
             <input
               className="form-check-input"
               type="checkbox"
-              value={props.statParams.other}
+              value={props.statParams.Other}
               name="other"
               id="flexCheckChecked"
               onChange={props.handleInputChangeCb}
@@ -53,11 +53,11 @@ export default function StatsParams(props) {
               Other{' '}
             </label>
           </div>
-          <div className="form-check col-2">
+          <div className="form-check col-auto">
             <input
               className="form-check-input"
               type="checkbox"
-              value={props.statParams.none}
+              value={props.statParams.None}
               name="none"
               id="flexCheckChecked"
               onChange={props.handleInputChangeCb}

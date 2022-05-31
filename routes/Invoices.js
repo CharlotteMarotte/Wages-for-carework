@@ -31,7 +31,6 @@ async function getLastInvoiceID() {
 // Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
 async function joinToJson(results) {
   await getCatAmt();
-  console.log(catAmt);
   // send back length of categories table
   let resultInvoices = [];
 
@@ -128,13 +127,49 @@ router.get('/last-invoice', async function (req, res) {
     LEFT OUTER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
     LEFT OUTER  JOIN categories AS c ON c.id = iIt.fk_categoriesID 
     WHERE i.id = ${lastInvoiceID};`;
-    
+
     let results = await db(sql);
     // Convert DB results into "sensible" JSON
     invoice = await joinLastInvoiceToJson(results);
     res.status(200).send(invoice);
   } catch (err) {
     res.status(500).send({ error: err.message });
+  }
+});
+
+router.get('/specify/*', async function (req, res) {
+  // The request's body is available in req.body
+  // If the query is successfull you should send back the full list of invoice properties
+  // Add your code here
+
+  const queryParams = req.query.partner_sexualOrient;
+
+  if (typeof queryParams === 'object' && queryParams.length !== 0) {
+    for (let i = 0; i < queryParams.length; i++) {
+      queryParams[i] =
+        queryParams[i][0].toUpperCase() + queryParams[i].substring(1);
+      queryParams[i] = `"${queryParams[i]}"`;
+    }
+    let queryString = queryParams;
+    if (queryParams.length > 1) {
+      queryString = queryParams.join(', ');
+    }
+
+    let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name FROM invoices AS i
+  INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
+  INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE i.id
+  IN (SELECT st.id FROM statistic_data AS st WHERE partner_sexualOrient IN (${queryString}))`;
+
+    try {
+      let results = await db(sql);
+      results = await joinToJson(results.data);
+      res.status(201);
+      res.send(results);
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  } else {
+    console.log('Something went wrong with the queryParams.');
   }
 });
 
@@ -216,13 +251,8 @@ router.post('/new', async function (req, res) {
   // If the query is successfull you should send back the full list of invoice properties
   // Add your code here
 
-  const {
-    nameFrom,
-    emailFrom,
-    nameTo,
-    emailTo,
-    invoiceDate,
-    invoiceItems  } = req.body;
+  const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems } =
+    req.body;
   const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate) 
                 VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}');
                 SELECT LAST_INSERT_ID();`;

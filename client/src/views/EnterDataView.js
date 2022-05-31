@@ -53,7 +53,7 @@ export default function EnterDataView(props) {
         <h3>DEMOGRAPHIC DATA</h3>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Household members (Total)
+            Household members (AMT)
           </label>
           <input
             required
@@ -67,7 +67,7 @@ export default function EnterDataView(props) {
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Of which: Flatmates (AMT)
+            Flatmates (AMT)
           </label>
           <input
             required
@@ -81,7 +81,7 @@ export default function EnterDataView(props) {
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Of which: Partners (AMT)
+            Partners (AMT)
           </label>
           <input
             required
@@ -95,7 +95,7 @@ export default function EnterDataView(props) {
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Children 0-6 years (AMT)
+            Children 0-6 y. (AMT)
           </label>
           <input
             required
@@ -109,7 +109,7 @@ export default function EnterDataView(props) {
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Children 7-18 years (AMT)
+            Children 7-18 y. (AMT)
           </label>
           <input
             required
@@ -123,7 +123,7 @@ export default function EnterDataView(props) {
         </div>
         <div className="col-md-4">
           <label htmlFor="inputNameFrom" className="form-label">
-            Caring sick/elderly (AMT)
+            Caring (other) (AMT)
           </label>
           <input
             required

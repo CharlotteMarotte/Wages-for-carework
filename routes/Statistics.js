@@ -14,38 +14,6 @@ router.get('/', (req, res) => {
     .catch((err) => res.status(500).send(err));
 });
 
-function makeWhereFromFilters(q) {
-  let filters = [];
-
-  if (q.relationshipstyle) {
-      filters.push(`partner_sexualOrient = '${q.breed}'`);
-  }
-
-
-  // Return all filters joined by AND
-  return filters.join(' AND ');
-}
-
-router.get('/specify', async function (req, res) {
-  // The request's body is available in req.body
-  // If the query is successfull you should send back the full list of invoice properties
-  // Add your code here
-
-  const {data} = req.body;
-  console.log(data);
-
-  let sql = `SELECT * FROM data WHERE partner_sexualOrient IN (${data});`;
-
-  try {
-    let results = await db(sql);
-    res.status(201);
-    res.send(results);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
-
-
 
 router.post('/new', async function (req, res) {
   // The request's body is available in req.body

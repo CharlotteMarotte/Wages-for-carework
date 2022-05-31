@@ -61,7 +61,7 @@ export default function GeneralStatisticsView(props) {
   }
 
   return (
-    <div className="genStatistics col-6 offset-3">
+    <div className="genStatistics col-6 offset-3 mb-4">
       <p>
         Currently {props.invoicesFromApp.length} invoices have been created!
       </p>

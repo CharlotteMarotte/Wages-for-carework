@@ -18,6 +18,7 @@ function AboutView(props) {
           Manifesto
         </cite>
       </figcaption>
+      <img src="https://cherwell.org/wp-content/uploads/2020/07/Wages-for-Housework-.png" className="img-fluid col-6 offset-3 mb-4"/>
     </div>
   );
 }
