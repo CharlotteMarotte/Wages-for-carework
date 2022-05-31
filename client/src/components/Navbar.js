@@ -27,11 +27,14 @@ function Navbar() {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse px-" id="navbarSupportedContent">
+          <div
+            className="collapse navbar-collapse px-"
+            id="navbarSupportedContent"
+          >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 px-5">
               <li className="nav-item px-3">
                 <NavLink className="nav-link active" aria-current="page" to="/">
-                  Home 
+                  Home
                 </NavLink>
               </li>
               <li className="nav-item px-3">
@@ -40,7 +43,7 @@ function Navbar() {
                   aria-current="page"
                   to="/about"
                 >
-                  About 
+                  About
                 </NavLink>
               </li>
               <li className="nav-item px-3">
@@ -49,10 +52,11 @@ function Navbar() {
                   aria-current="page"
                   to="/enter-data"
                 >
-                  Create Invoice 
+                  Create Invoice
                 </NavLink>
               </li>
 
+              {/* Navbar with options for statistics */}
               <li className="nav-item dropdown px-3">
                 <a
                   className="nav-link dropdown-toggle"

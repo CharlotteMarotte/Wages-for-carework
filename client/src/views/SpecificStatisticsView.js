@@ -16,20 +16,22 @@ export default function SpecificStatisticsView(props) {
   const handleInputChange = (event) => {
     let { name, checked } = event.target;
 
-    // gets pressed after each key change
+    // gets pressed after each change of checkboxes
     setStatParams((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
-      [name]: Boolean(checked), // updates key [name] with new value
+      [name]: Boolean(checked), // updates key [name] with new value, value is String, must get parsed to Boolean
     }));
   };
 
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
+    // should only send those keys that got checked (are true)
+    // BUG FIX: if queryStringTrues only has one element sth else needs to happen because MySQL IN expects more than one argument
     let queryStringTrues = Object.keys(statParams)
       .filter((k) => statParams[k])
-      .map((e) => `partner_sexualOrient=${e}`)
-      .join('&');
+      .map((e) => `partner_sexualOrient=${e}`) // property needs to be a string with partner_sexualOrient= infront
+      .join('&'); // all keys should be joined with &
     getSpecialData(queryStringTrues);
     // empty form after set
     setStatParams(EMPTY_FORM);
@@ -62,12 +64,13 @@ export default function SpecificStatisticsView(props) {
       {filteredInvoices.length !== 0 && (
         <div className="row row-cols-12 mb-3">
           {filteredInvoices.map((i) => (
-            <>
+            // empty root element because React needs one parent root element
+            <> 
               <p style={{fontWeight: "bold", fontSize: "25px"}} className="border-bottom border-dark border-3 col-10">TO: {i.nameTo}</p>{' '}
               {i.invoiceItems.map((it, index) => (
                 // arrow function, so it doesn't get called immediately but only after a click
                 <InvoiceDocItem
-                  key={index}
+                  key={index} //BUGFIX: somehow it doesn't work to give the index as a key?
                   billCatFromApp={props.billCatFromApp}
                   invoiceFromDoc={it}
                 />

@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const db = require('../model/helper');
 
+// maybe it's not ideal to have this as a global variable because it might lead to timing bugs
+
 let catAmt = 0;
 let lastInvoiceID = 0;
 
@@ -11,7 +13,6 @@ async function getCatAmt() {
     let sql = `SELECT COUNT(id) AS total FROM categories;`;
     let results = await db(sql);
     catAmt = results.data[0].total;
-    // here catAmt is 9
   } catch (error) {
     res.status(500).send({ error: err.message });
   }
@@ -19,7 +20,7 @@ async function getCatAmt() {
 
 async function getLastInvoiceID() {
   try {
-    // to get number of categories
+    // to get number ID of last invoice added to DB
     let sql = `SELECT MAX(id) AS lastID FROM invoices;`;
     let results = await db(sql);
     lastInvoiceID = results.data[0].lastID;
@@ -29,19 +30,17 @@ async function getLastInvoiceID() {
 }
 
 // Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
+// !!! it's an async function, so whenever it gets called it needs to happen with an await
 async function joinToJson(results) {
   await getCatAmt();
   // send back length of categories table
   let resultInvoices = [];
 
-  // WHY IS CATAMT 0? NOT GOOD TO WRITE 9
   for (let i = 0; i < results.length; i += catAmt) {
     let row = results[i];
     let invoiceItems = [];
 
     // Create array of invoice items objs
-
-    // WHY IS CATAMT 0? NOT GOOD TO WRITE 9
     for (let j = 0; j < catAmt; j++) {
       let invoiceItObj = new Object();
 
@@ -104,7 +103,7 @@ async function joinLastInvoiceToJson(results) {
 }
 
 router.get('/', (req, res) => {
-  // Send back the full list of items
+  // Send back the full list of invoices joined with name from categories and data from invoice items
   db(`SELECT i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
   FROM invoices AS i
   INNER JOIN statistic_data AS s ON i.id = s.id
@@ -112,7 +111,7 @@ router.get('/', (req, res) => {
   INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY i.id ASC;`)
     .then(async (results) => {
       let invoice = results.data;
-      invoice = await joinToJson(invoice);
+      invoice = await joinToJson(invoice); // joinToJson is async so needs to get called with await
       res.send(invoice);
     })
     .catch((err) => res.status(500).send(err));
@@ -120,7 +119,6 @@ router.get('/', (req, res) => {
 
 router.get('/last-invoice', async function (req, res) {
   await getLastInvoiceID();
-  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT i.*, iIt.hour,  iIt.rate, iIt.amount, c.cat_name
     FROM invoices AS i
@@ -130,7 +128,7 @@ router.get('/last-invoice', async function (req, res) {
 
     let results = await db(sql);
     // Convert DB results into "sensible" JSON
-    invoice = await joinLastInvoiceToJson(results);
+    invoice = await joinLastInvoiceToJson(results); // joinToJson is async so needs to get called with await
     res.status(200).send(invoice);
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -138,19 +136,19 @@ router.get('/last-invoice', async function (req, res) {
 });
 
 router.get('/specify/*', async function (req, res) {
-  // The request's body is available in req.body
-  // If the query is successfull you should send back the full list of invoice properties
-  // Add your code here
-
+  // The request's parameters are available in req.query
   const queryParams = req.query.partner_sexualOrient;
 
+  // Sometimes there happened a weird bug here, so tried to catch the error with this if, try reloading if it happens 
   if (typeof queryParams === 'object' && queryParams.length !== 0) {
     for (let i = 0; i < queryParams.length; i++) {
       queryParams[i] =
-        queryParams[i][0].toUpperCase() + queryParams[i].substring(1);
-      queryParams[i] = `"${queryParams[i]}"`;
+        queryParams[i][0].toUpperCase() + queryParams[i].substring(1); // params from URL are always lowercase in DB value is capitalized in the beginning of the word
+      queryParams[i] = `"${queryParams[i]}"`; // wraps param from URL in string for SQL request
     }
     let queryString = queryParams;
+    // if there is more than one queryParams, items should be seperated with ,
+    // BUG FIX: if it's === 1, something else should happen because SQL IN only works with more than one argument
     if (queryParams.length > 1) {
       queryString = queryParams.join(', ');
     }
@@ -158,7 +156,7 @@ router.get('/specify/*', async function (req, res) {
     let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name FROM invoices AS i
   INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
   INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE i.id
-  IN (SELECT st.id FROM statistic_data AS st WHERE partner_sexualOrient IN (${queryString}))`;
+  IN (SELECT st.id FROM statistic_data AS st WHERE partner_sexualOrient IN (${queryString}))`; // nested SELECT statement
 
     try {
       let results = await db(sql);
@@ -175,11 +173,10 @@ router.get('/specify/*', async function (req, res) {
 
 router.get('/total', async function (req, res) {
   let id = Number(req.params.id);
-  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT SUM(amount) AS total FROM invoice_items;`;
     let results = await db(sql);
-    let total = results.data[0].total.toString();
+    let total = results.data[0].total.toString(); // cannot send number, that's why it needs to be converted to String
     // Convert DB results into "sensible" JSON
     res.status(200).send(total);
   } catch (err) {
@@ -189,7 +186,6 @@ router.get('/total', async function (req, res) {
 
 router.get('/total-hours', async function (req, res) {
   let id = Number(req.params.id);
-  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT SUM(hour) AS total FROM invoice_items;`;
     let results = await db(sql);
@@ -203,7 +199,6 @@ router.get('/total-hours', async function (req, res) {
 
 router.get('/average/:catID', async function (req, res) {
   let catID = Number(req.params.catID);
-  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT c.cat_name AS catName, AVG(hour) AS avgHour, AVG(rate) AS avgRate, AVG(amount) AS avgAmount 
     FROM invoice_items AS iIt INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE fk_categoriesID=${catID};`;
@@ -218,7 +213,6 @@ router.get('/average/:catID', async function (req, res) {
 
 router.get('/:id/total', async function (req, res) {
   let id = Number(req.params.id);
-  // and again lastInvoiceID is 0 outside the function, should not be 9 in l. 97
   try {
     let sql = `SELECT SUM (amount) total FROM invoice_items WHERE fk_invoiceID = ${id};`;
     let results = await db(sql);
@@ -233,9 +227,10 @@ router.get('/:id/total', async function (req, res) {
 router.get('/:id/stats', async function (req, res) {
   let id = Number(req.params.id);
   try {
+    // i.id and s.id always match because there is always the same amount of entries in there
     let sql = `SELECT i.*, s.*
     FROM invoices AS i
-    LEFT OUTER JOIN statistic_data AS s ON i.id = s.id
+    LEFT OUTER JOIN statistic_data AS s ON i.id = s.id 
     WHERE i.id = ${id};`;
     let results = await db(sql);
     results = results.data[0];
@@ -249,7 +244,6 @@ router.get('/:id/stats', async function (req, res) {
 router.post('/new', async function (req, res) {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of invoice properties
-  // Add your code here
 
   const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems } =
     req.body;

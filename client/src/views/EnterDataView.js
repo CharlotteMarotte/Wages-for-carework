@@ -14,35 +14,38 @@ const EMPTY_FORM = {
 };
 
 export default function EnterDataView(props) {
+  //
+  // Form to enter demographic data
+  //
+
   const [statData, setStatData] = useState(EMPTY_FORM);
 
-  // gets called every time a key is pressed
+  // gets called every time a radio button element is selected
   const handleInputChange = (event) => {
     let { name, value } = event.target;
 
-    // gets pressed after each key change
     setStatData((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
     }));
   };
 
+  // to handle input of number fields because value must be parsed to Number(value)
   const handleIntInputChange = (event) => {
     let name = event.target.name;
-    let value = Number(event.target.value);
+    let value = Number(event.target.value); // otherwise value would be a String
 
-    // gets pressed after each key change
+    // gets called after each interaction with error or insertion with keyboard
     setStatData((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
     }));
   };
-
 
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.continueFromStatisticsCb(statData); // pass data back up to parent using props.addInvoiceCb();
+    props.continueFromStatisticsCb(statData); // passes data back up to parent using props.addInvoiceCb(); - doesn't submit yet but instead saves it in a state in the app
     // empty form after set
     setStatData(EMPTY_FORM);
   };
@@ -56,7 +59,7 @@ export default function EnterDataView(props) {
             Household members (AMT)
           </label>
           <input
-            required
+            required // makes error message appear if user didn't choose an option, didn't find a way to give default checked to radio button
             className="form-control"
             name={'amt_HouseholdMem'}
             value={statData.amt_HouseholdMem}

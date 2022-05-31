@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import './InvoiceItem.css';
 
 export default function InvoiceItem(props) {
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(true); // holds state if checkbox is checked or not
 
   const index = props.invoiceItemsFromCreate.findIndex(
     (i) => i.CatId === props.billCatFromApp.id
@@ -11,7 +11,7 @@ export default function InvoiceItem(props) {
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
-    props.setInputToZeroCb(index);
+    props.setInputToZeroCb(index); // if checkbox is checked all values (except rate) should be set to 0
   };
 
   return (
@@ -27,6 +27,7 @@ export default function InvoiceItem(props) {
         />
       </div>
       <div className="col">
+        {/* apply style only if checkbox is checked */}
         <p className={checked ? '' : 'inActive'}>
           {props.billCatFromApp.cat_name}
         </p>

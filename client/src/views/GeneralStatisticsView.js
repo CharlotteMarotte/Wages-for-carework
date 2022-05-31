@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import InvoiceDocItem from '../components/InvoiceDocItem';
 
 export default function GeneralStatisticsView(props) {
-  const [totalOfAll, setTotalOfAll] = useState(0);
-  const [totalHours, setTotalHours] = useState(0);
-  const [averageAll, setAverageAll] = useState([]);
+  const [totalOfAll, setTotalOfAll] = useState(0); // holds value of total of all all invoice totals (amount)
+  const [totalHours, setTotalHours] = useState(0); // holds value of total of all all invoice totals (hours)
+  const [averageAll, setAverageAll] = useState([]); // holds average hours, rate, amount for all invoice items
 
+  // get all of this information on rendering of App to display it
   useEffect(() => {
     getTotalOfAll();
     getTotalHoursOfAll();
@@ -42,6 +42,7 @@ export default function GeneralStatisticsView(props) {
 
   async function getTotalAverageOfAll() {
     let averages = [];
+    // calcualtes average for each category
     for (let c of props.billCatsFromApp) {
       try {
         let response = await fetch(`/invoices/average/${c.id}`); // does GET by default

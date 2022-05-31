@@ -1,6 +1,10 @@
 import React from 'react';
 
-function HomeView(props) {
+function HomeView() {
+  // 
+  // Home Page, for introductory text
+  // 
+
   return (
     <div className="HomeView col-6 offset-3">
       <blockquote className="blockquote">

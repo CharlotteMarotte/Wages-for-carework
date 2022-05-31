@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import './InvoiceDocItem.css';
 
 export default function InvoiceDocItem(props) {
+
+  // displays in one line category name, rate, hours, amount
+
   return (
     <>
       <div className="col-3">

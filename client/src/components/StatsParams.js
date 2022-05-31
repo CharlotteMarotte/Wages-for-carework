@@ -47,7 +47,7 @@ export default function StatsParams(props) {
               value={props.statParams.Other}
               name="other"
               id="flexCheckChecked"
-              onChange={props.handleInputChangeCb}
+              onChange={props.handleInputChangeCb} //change gets handled in parent component
             />
             <label className="form-check-label"htmlFor="flexCheckChecked">
               Other{' '}

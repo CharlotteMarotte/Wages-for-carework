@@ -16,19 +16,21 @@ function App() {
   // Declare state/reactive variables with initial values
   //
   const navigate = useNavigate();
-  let [billCats, setBillCats] = useState([]);
-  let [invoices, setInvoices] = useState([]);
-  let [statistics, setStatistics] = useState([]);
+  let [billCats, setBillCats] = useState([]); // when App is rendered all categories will be fetched from DB and stored here
+  let [invoices, setInvoices] = useState([]); // when App is rendered all invoides will be fetched from DB and stored here and when a invoice is added this state will get updated
+  let [statistics, setStatistics] = useState([]); // this gets set with all entries in statistic_data table when data is added to be stored until data is submitted by form in 
 
-  //
-  // Declare funcs used in this component
-  //
-
+  // gets all categories and all invoices that exist at the moment of rendering of the App
   useEffect(() => {
     getBillCats();
     getInvoices();
   }, []);
 
+  //
+  // Declare funcs used in this component
+  //
+
+  // gets all entries in invoices data, see routes/Invoices for implementation
   async function getInvoices() {
     try {
       let response = await fetch('/invoices'); // does GET by default
@@ -43,6 +45,7 @@ function App() {
     }
   }
 
+  // gets passed as a prop to CreateInvoice View
   async function addInvoice(invoiceData) {
     // Define fetch() options
     let options = {
@@ -56,9 +59,8 @@ function App() {
     try {
       let response = await fetch('/invoices/new', options); // do POST
       if (response.ok) {
-        let invoices = await response.json();
+        let invoices = await response.json(); // set invoices state with all invoices including new ones
         setInvoices(invoices);
-        console.log(invoices);
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -80,8 +82,8 @@ function App() {
     try {
       let response = await fetch('/statistics/new', options); // do POST
       if (response.ok) {
-        let statistics = await response.json();
-        setStatistics(statistics);
+        let statistics = await response.json(); 
+        setStatistics(statistics); // set statistics state with all invoices including new ones
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -95,7 +97,7 @@ function App() {
       let response = await fetch('/bill-cats'); // does GET by default
       if (response.ok) {
         let categories = await response.json();
-        setBillCats(categories);
+        setBillCats(categories); // set billCats state with all categories, so it can be used by other components/views
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -105,14 +107,13 @@ function App() {
   }
 
   function showInvoiceDoc() {
-    navigate('/invoices'); // redirect to /users
+    navigate('/invoices'); // redirect to /invoices
   }
 
   function continueFromStatistics(data) {
     addStatisticData(data);
-    navigate('/create'); // redirect to /users
+    navigate('/create'); // redirect to /create
   }
-
 
   return (
     <div className="App">
@@ -122,7 +123,9 @@ function App() {
         <Route path="about" element={<AboutView />} />
         <Route
           path="enter-data"
-          element={<EnterDataView continueFromStatisticsCb={continueFromStatistics} />}
+          element={
+            <EnterDataView continueFromStatisticsCb={continueFromStatistics} />
+          }
         />
         <Route
           path="create"
@@ -131,7 +134,7 @@ function App() {
               billCatFromApp={billCats}
               showInvoiceDocCb={showInvoiceDoc}
               addInvoiceCb={addInvoice}
-              nextId={invoices.length + 1}
+              nextNo={invoices.length + 1} // invoice numbers started with 1, so last invoice has number invoice.length
             />
           }
         />
@@ -140,7 +143,7 @@ function App() {
           element={
             <InvoiceDocView
               billCatFromApp={billCats}
-              ix={invoices.length - 1}
+              ix={invoices.length - 1} // not ideal way to show last invoice, assumes invoices can never be deleted
               getInvoicesCb={getInvoices}
             />
           }

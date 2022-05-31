@@ -17,8 +17,7 @@ router.get('/', (req, res) => {
 
 router.post('/new', async function (req, res) {
   // The request's body is available in req.body
-  // If the query is successfull you should send back the full list of invoice properties
-  // Add your code here
+  // If the query is successfull you should send back the full list of statistic data properties
 
   const {
     amt_HouseholdMem,

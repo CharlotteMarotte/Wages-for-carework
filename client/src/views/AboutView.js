@@ -1,6 +1,9 @@
 import React from 'react';
 
 function AboutView(props) {
+  // 
+  // For About text about website
+  // 
   return (
     <div className="AboutView col-6 offset-3 ">
       <h2>About</h2>
