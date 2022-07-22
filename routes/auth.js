@@ -5,6 +5,79 @@ const jwt = require('jsonwebtoken');
 const { BCRYPT_WORK_FACTOR, SECRET_KEY } = require('../config');
 const db = require('../model/helper');
 
+async function getCatAmt() {
+  try {
+    // to get number of categories
+    let sql = `SELECT COUNT(categoryID) AS total FROM categories;`;
+    let results = await db(sql);
+    return results.data[0].total;
+  } catch (error) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
+async function joinToJson(results) {
+  // Get first row
+  let row0 = results[0];
+ 
+  let catAmt = await getCatAmt();
+  // send back length of categories table
+
+  let resultInvoices = [];
+  console.log(catAmt);
+
+  for (let i = 0; i < results.length; i += catAmt) {
+    let row = results[i];
+    let invoiceItems = [];
+
+    // Create array of invoice items objs
+    for (let j = 0; j < catAmt; j++) {
+      let invoiceItObj = new Object();
+
+      invoiceItObj.category = results[j].cat_name;
+      invoiceItObj.hours = results[j].hour;
+      invoiceItObj.rate = results[j].rate;
+      invoiceItObj.amount = results[j].amount;
+      invoiceItems.push(invoiceItObj);
+    }
+
+    // // Create invoice obj
+    let invoice = {
+      id: row.invoiceID,
+      nameTo: row.nameTo,
+      emailTo: row.emailTo,
+      invoiceDate: row.invoiceDate,
+      invoiceItems,
+    };
+    resultInvoices.push(invoice);
+  }
+
+  // Create invoice obj
+  let user = {
+    id: row0.userID,
+    username: row0.username,
+    firstname: row0.firstname,
+    lastname: row0.lastname,
+    email: row0.email,
+    demographicData: {
+      amt_householdMem: row0.amt_householdMem,
+      amt_children0_6: row0.amt_children0_6,
+      amt_children0_6: row0.amt_children0_6,
+      amt_children0_6: row0.amt_children0_6,
+      amt_partners: row0.amt_partners,
+      otherCaringResp: row0.otherCaringResp,
+      partner_sexualOrient: row0.partner_sexualOrient,
+      partner_relStyle: row0.partner_relStyle,
+      employment_status: row0.employment_status,
+      domesticHelp: row0.domesticHelp,
+    },
+    invoices: resultInvoices
+  };
+
+  return user;
+}
+
+
 /**
  * Register a user
  **/
@@ -39,7 +112,15 @@ router.post('/login', async (req, res) => {
 
   try {
     let results = await db(
-      `SELECT * FROM users WHERE username = '${username}'`
+      `SELECT u.*, i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+      FROM users AS u 
+      LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+      LEFT JOIN statistic_data AS s ON u.fk_statisticsID = s.statisticID
+      LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+      INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+      WHERE u.username='${username}'
+      ORDER BY i.invoiceID ASC;
+      `
     );
     if (results.data.length === 0) {
       // Username not found
@@ -52,8 +133,7 @@ router.post('/login', async (req, res) => {
         let payload = { userId: user.id };
         // Create token containing user ID
         let token = jwt.sign(payload, SECRET_KEY);
-        // Also return user (without password)
-        delete user.password;
+        user = await joinToJson(results.data);
         res.send({
           message: 'Login succeeded',
           token: token,

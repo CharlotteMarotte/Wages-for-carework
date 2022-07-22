@@ -15,13 +15,13 @@ SET
     foreign_key_checks = 1;
 
 CREATE TABLE categories (
-    id INT NOT NULL AUTO_INCREMENT,
+    categoryID INT NOT NULL AUTO_INCREMENT,
     cat_name varchar(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (categoryID)
 );
 
 CREATE TABLE statistic_data (
-    id INT NOT NULL AUTO_INCREMENT,
+    statisticID INT NOT NULL AUTO_INCREMENT,
     amt_householdMem INT NOT NULL,
     amt_children0_6 INT NOT NULL,
     amt_children7_18 INT NOT NULL,
@@ -31,41 +31,42 @@ CREATE TABLE statistic_data (
     partner_sexualOrient varchar(255) NOT NULL,
     partner_relStyle varchar(255) NOT NULL,
     employment_status varchar(255) NOT NULL,
-    domesticHelp BINARY NOT NULL,
-    PRIMARY KEY (id)
+    domesticHelp TINYINT NOT NULL,
+    PRIMARY KEY (statisticID)
 );
 
 CREATE TABLE users (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    userID INT NOT NULL AUTO_INCREMENT,
     fk_statisticsID INT,
     username VARCHAR(30) NOT NULL UNIQUE,
     firstname varchar(255) NOT NULL,
     lastname varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     password VARCHAR(200) NOT NULL,
-    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(id) ON DELETE CASCADE
+    PRIMARY KEY (userID),
+    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(statisticID) ON DELETE CASCADE
 );
 
 CREATE TABLE invoices (
-    id INT NOT NULL AUTO_INCREMENT,
+    invoiceID INT NOT NULL AUTO_INCREMENT,
     fk_userID INT NOT NULL,
     nameTo varchar(255) NOT NULL,
     emailTo varchar(255) NOT NULL,
     invoiceDate DATE NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (fk_userID) REFERENCES users(id) ON DELETE CASCADE
+    PRIMARY KEY (invoiceID),
+    FOREIGN KEY (fk_userID) REFERENCES users(userID) ON DELETE CASCADE
 );
 
 CREATE TABLE invoice_items (
-    id INT NOT NULL AUTO_INCREMENT,
+    invoiceItemID INT NOT NULL AUTO_INCREMENT,
     fk_invoiceID INT NOT NULL,
     fk_categoriesID INT NOT NULL,
     hour NUMERIC(10, 2) NOT NULL,
     rate NUMERIC(10, 2) NOT NULL,
     amount NUMERIC(10, 2) NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (fk_invoiceID) REFERENCES invoices(id) ON DELETE CASCADE,
-    FOREIGN KEY (fk_categoriesID) REFERENCES categories(id) ON DELETE CASCADE
+    PRIMARY KEY (invoiceItemID),
+    FOREIGN KEY (fk_invoiceID) REFERENCES invoices(invoiceID) ON DELETE CASCADE,
+    FOREIGN KEY (fk_categoriesID) REFERENCES categories(categoryID) ON DELETE CASCADE
 );
 
 INSERT INTO
@@ -105,7 +106,7 @@ VALUES
         'Queer',
         'Monogamous',
         'Full-time wage job',
-        FALSE
+        0
     ),
     (
         5,
@@ -117,7 +118,7 @@ VALUES
         'Hetero',
         'Polyamorous',
         'Part-time wage job',
-        TRUE
+        1
     ),
     (
         5,
@@ -129,7 +130,7 @@ VALUES
         'Other',
         'None',
         'No wage job',
-        FALSE
+        0
     );
 
 INSERT INTO

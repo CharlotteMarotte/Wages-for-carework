@@ -3,17 +3,6 @@ var router = express.Router();
 const db = require('../model/helper');
 
 
-async function getCatAmt() {
-  try {
-    // to get number of categories
-    let sql = `SELECT COUNT(id) AS total FROM categories;`;
-    let results = await db(sql);
-    return results.data[0].total;
-  } catch (error) {
-    res.status(500).send({ error: err.message });
-  }
-}
-
 async function getLastInvoiceID() {
   try {
     // to get number ID of last invoice added to DB
