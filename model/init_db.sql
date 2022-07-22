@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS invoice_items;
 
 DROP TABLE IF EXISTS statistic_data;
 
+DROP TABLE IF EXISTS users;
+
 SET
     foreign_key_checks = 1;
 
@@ -33,27 +35,38 @@ CREATE TABLE statistic_data (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE users (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    fk_statisticsID INT,
+    username VARCHAR(30) NOT NULL UNIQUE,
+    firstname varchar(255) NOT NULL,
+    lastname varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    password VARCHAR(200) NOT NULL,
+    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(id) ON DELETE CASCADE
+);
+
 CREATE TABLE invoices (
     id INT NOT NULL AUTO_INCREMENT,
-    nameFrom varchar(255) NOT NULL,
-    emailFrom varchar(255) NOT NULL,
+    fk_userID INT NOT NULL,
     nameTo varchar(255) NOT NULL,
     emailTo varchar(255) NOT NULL,
     invoiceDate DATE NOT NULL,
-    PRIMARY KEY (id));
+    PRIMARY KEY (id),
+    FOREIGN KEY (fk_userID) REFERENCES users(id) ON DELETE CASCADE
+);
 
 CREATE TABLE invoice_items (
     id INT NOT NULL AUTO_INCREMENT,
     fk_invoiceID INT NOT NULL,
     fk_categoriesID INT NOT NULL,
     hour NUMERIC(10, 2) NOT NULL,
-    rate NUMERIC(10, 2)  NOT NULL,
-    amount NUMERIC(10, 2 )NOT NULL,
+    rate NUMERIC(10, 2) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (fk_invoiceID) REFERENCES invoices(id) ON DELETE CASCADE,
     FOREIGN KEY (fk_categoriesID) REFERENCES categories(id) ON DELETE CASCADE
 );
-
 
 INSERT INTO
     categories (cat_name)
@@ -93,22 +106,91 @@ VALUES
         'Monogamous',
         'Full-time wage job',
         FALSE
+    ),
+    (
+        5,
+        1,
+        1,
+        1,
+        1,
+        2,
+        'Hetero',
+        'Polyamorous',
+        'Part-time wage job',
+        TRUE
+    ),
+    (
+        5,
+        1,
+        1,
+        1,
+        1,
+        2,
+        'Other',
+        'None',
+        'No wage job',
+        FALSE
+    );
+
+INSERT INTO
+    users (
+        fk_statisticsID,
+        username,
+        firstname,
+        lastname,
+        email,
+        password
+    )
+VALUES
+    (
+        1,
+        'user1',
+        'Silvia',
+        'Federici',
+        'Silvia.Federici@unimi.it',
+        '$2b$12$eFzMWbS9SogNtxkmo3J7aO8FQMFQSKbtpwLMIOVsF6GGKpTQdgq.W'
+    ),
+    (
+        2,
+        'user2',
+        'Mariarosa',
+        'Dalla Costa',
+        'Mariarosa.Dalla-Costa@@unipd.it',
+        '$2b$12$WZcGPyrkCvD5e8m0Qz/nFOdBryUcsp6uDlE2MDo/AjuBhPrQBCfI6'
+    ),
+    (
+        3,
+        'user3',
+        'Selma',
+        'James',
+        'Selma.James@riseup.net',
+        '$2b$12$tiAz4eaXlpU.CdltUVvw6udLA2BWsitk5zXM2XOm2IpAeAiFfMCdy'
     );
 
 INSERT INTO
     invoices (
-        nameFrom,
-        emailFrom,
+        fk_userID,
         nameTo,
         emailTo,
         invoiceDate
     )
 VALUES
     (
-        'Silvia Federici',
-        'Silvia.Federici@unimi.it',
+        1,
         'Patriarchy',
         'info@patriarchy.com',
+        '2022-05-24'
+    ),
+    (
+        2,
+        'Patriarcato',
+        'info@patriarcato.it',
+        '2022-07-22'
+    ),
+    (
+        3,
+        'Patriarchy',
+        'info@patriarchy.uk',
         '2022-05-24'
     );
 
@@ -121,92 +203,39 @@ INSERT INTO
         amount
     )
 VALUES
-    (1, 1, 0, 15, 0);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceId,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 2, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceId,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 3, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 4, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesID,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 5, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesID,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 6, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 7, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 8, 3, 15, 45);
-
-INSERT INTO
-    invoice_Items (
-        fk_invoiceID,
-        fk_categoriesId,
-        hour,
-        rate,
-        amount
-    )
-VALUES
-    (1, 9, 10, 15, 150);
+    -- for categoryId 1 
+    (1, 1, 0, 15, 0),
+    (2, 1, 0, 15, 0),
+    (3, 1, 0, 15, 0),
+    -- for categoryId 2
+    (1, 2, 3, 15, 45),
+    (2, 2, 3, 15, 45),
+    (3, 2, 3, 15, 45),
+    -- for categoryId 3
+    (1, 3, 3, 15, 45),
+    (2, 3, 3, 15, 45),
+    (3, 3, 3, 15, 45),
+    -- for categoryId 4
+    (1, 4, 3, 15, 45),
+    (2, 4, 3, 15, 45),
+    (3, 4, 3, 15, 45),
+    -- for categoryId 5
+    (1, 5, 3, 15, 45),
+    (1, 5, 3, 15, 45),
+    (1, 5, 3, 15, 45),
+    -- for categoryId 6
+    (1, 6, 3, 15, 45),
+    (2, 6, 3, 15, 45),
+    (3, 6, 3, 15, 45),
+    -- for categoryId 7
+    (1, 7, 3, 15, 45),
+    (2, 7, 3, 15, 45),
+    (3, 7, 3, 15, 45),
+    -- for categoryId 8
+    (1, 8, 3, 15, 45),
+    (2, 8, 3, 15, 45),
+    (3, 8, 3, 15, 45),
+    -- for categoryId 9
+    (1, 9, 10, 15, 150),
+    (2, 9, 10, 15, 150),
+    (3, 9, 10, 15, 150);

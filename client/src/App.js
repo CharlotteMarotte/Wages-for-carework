@@ -11,6 +11,13 @@ import GeneralStatisticsView from './views/GeneralStatisticsView';
 import SpecificStatisticsView from './views/SpecificStatisticsView';
 import EnterDataView from './views/EnterDataView';
 
+import Local from './helpers/Local';
+import Api from './helpers/Api';
+
+import LoginView from './views/LoginView';
+import ProfileView from './views/ProfileView';
+import SignUpView from './views/SignUpView';
+
 function App() {
   //
   // Declare state/reactive variables with initial values
@@ -18,7 +25,11 @@ function App() {
   const navigate = useNavigate();
   let [billCats, setBillCats] = useState([]); // when App is rendered all categories will be fetched from DB and stored here
   let [invoices, setInvoices] = useState([]); // when App is rendered all invoides will be fetched from DB and stored here and when a invoice is added this state will get updated
-  let [statistics, setStatistics] = useState([]); // this gets set with all entries in statistic_data table when data is added to be stored until data is submitted by form in 
+  let [statistics, setStatistics] = useState([]); // this gets set with all entries in statistic_data table when data is added to be stored until data is submitted by form in
+  const [user, setUser] = useState(Local.getUser());
+  const [loginErrorMsg, setLoginErrorMsg] = useState('');
+  const [registerErrorMsg, setRegisterErrorMsg] = useState('');
+
 
   // gets all categories and all invoices that exist at the moment of rendering of the App
   useEffect(() => {
@@ -29,6 +40,40 @@ function App() {
   //
   // Declare funcs used in this component
   //
+
+  // POST method to add recipe to my sql database ("favorites" sql table) after click on Add to Favorites in the RecipeDetailView
+  async function addUser(userData) {
+    let myresponse = await Api.addUser(userData); // do POST
+    if (myresponse.status === 400) {
+      setRegisterErrorMsg('User name is already taken!');
+    } else if (myresponse.ok) {
+      setRegisterErrorMsg('');
+      setLoginErrorMsg('');
+      navigate('/login');
+    } else {
+      console.log(
+        `Server error: ${myresponse.status} ${myresponse.statusText}`
+      );
+      setRegisterErrorMsg('Registration failed!');
+    }
+  }
+
+  async function doLogin(username, password) {
+    let myresponse = await Api.loginUser(username, password);
+    if (myresponse.ok) {
+      Local.saveUserInfo(myresponse.data.token, myresponse.data.user);
+      setUser(myresponse.data.user);
+      setLoginErrorMsg('');
+      navigate('/');
+    } else {
+      setLoginErrorMsg('Login failed');
+    }
+  }
+
+  function doLogout() {
+    Local.removeUserInfo();
+    setUser(null);
+  }
 
   // gets all entries in invoices data, see routes/Invoices for implementation
   async function getInvoices() {
@@ -82,7 +127,7 @@ function App() {
     try {
       let response = await fetch('/statistics/new', options); // do POST
       if (response.ok) {
-        let statistics = await response.json(); 
+        let statistics = await response.json();
         setStatistics(statistics); // set statistics state with all invoices including new ones
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
@@ -117,10 +162,28 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar />
+      <Navbar user={user} logoutCb={doLogout}/>
       <Routes>
         <Route path="/" element={<HomeView invoicesFromApp={invoices} />} />
         <Route path="about" element={<AboutView />} />
+        <Route
+            path="/login"
+            element={
+              <LoginView
+                loginCb={(u, p) => doLogin(u, p)}
+                loginError={loginErrorMsg}
+              />
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <SignUpView
+                addUserCb={addUser}
+                registerError={registerErrorMsg}
+              />
+            }
+          />
         <Route
           path="enter-data"
           element={

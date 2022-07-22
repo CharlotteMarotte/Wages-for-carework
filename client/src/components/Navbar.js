@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar(props) {
   return (
     <div>
       <nav className="mynavbar navbar navbar-expand-lg navbar-light sticky-top col-8 offset-2">
@@ -46,6 +46,7 @@ function Navbar() {
                   About
                 </NavLink>
               </li>
+
               <li className="nav-item px-3">
                 <NavLink
                   className="nav-link active"
@@ -83,6 +84,36 @@ function Navbar() {
                   </li>
                 </ul>
               </li>
+              {props.user ? (
+                <ul className="navbar-nav">
+                  {/* <li className="nav-item">
+                    <NavLink
+                      className="nav-link"
+                      to={`/users/${props.user.id}`}
+                    >
+                      Profile ({props.user.username})
+                    </NavLink>
+                  </li> */}
+                  <li className="nav-item">
+                    {/* Log out user. Then go to home page. */}
+                    <NavLink
+                      className="nav-link"
+                      to="/"
+                      onClick={props.logoutCb}
+                    >
+                      Logout
+                    </NavLink>
+                  </li>
+                </ul>
+              ) : (
+                <ul className="navbar-nav">
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/login">
+                      Login
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </ul>
           </div>
         </div>

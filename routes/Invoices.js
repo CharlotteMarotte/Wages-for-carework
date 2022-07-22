@@ -2,17 +2,13 @@ var express = require('express');
 var router = express.Router();
 const db = require('../model/helper');
 
-// maybe it's not ideal to have this as a global variable because it might lead to timing bugs
-
-let catAmt = 0;
-let lastInvoiceID = 0;
 
 async function getCatAmt() {
   try {
     // to get number of categories
     let sql = `SELECT COUNT(id) AS total FROM categories;`;
     let results = await db(sql);
-    catAmt = results.data[0].total;
+    return results.data[0].total;
   } catch (error) {
     res.status(500).send({ error: err.message });
   }
@@ -23,7 +19,7 @@ async function getLastInvoiceID() {
     // to get number ID of last invoice added to DB
     let sql = `SELECT MAX(id) AS lastID FROM invoices;`;
     let results = await db(sql);
-    lastInvoiceID = results.data[0].lastID;
+    return results.data[0].lastID;
   } catch (error) {
     res.status(500).send({ error: err.message });
   }
@@ -32,7 +28,7 @@ async function getLastInvoiceID() {
 // Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
 // !!! it's an async function, so whenever it gets called it needs to happen with an await
 async function joinToJson(results) {
-  await getCatAmt();
+  let catAmt = await getCatAmt();
   // send back length of categories table
   let resultInvoices = [];
 
@@ -118,7 +114,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/last-invoice', async function (req, res) {
-  await getLastInvoiceID();
+  let lastInvoiceID = await getLastInvoiceID();
   try {
     let sql = `SELECT i.*, iIt.hour,  iIt.rate, iIt.amount, c.cat_name
     FROM invoices AS i
