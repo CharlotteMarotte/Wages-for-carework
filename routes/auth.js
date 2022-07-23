@@ -41,12 +41,16 @@ async function joinToJson(results) {
       invoiceItems.push(invoiceItObj);
     }
 
+    let formatDate = new Date(row.invoiceDate);
+    formatDate = (formatDate.getMonth() + 1) + "/" + formatDate.getDate() + "/" + formatDate.getFullYear();
+
     // // Create invoice obj
     let invoice = {
       id: row.invoiceID,
       nameTo: row.nameTo,
       emailTo: row.emailTo,
-      invoiceDate: row.invoiceDate,
+      invoiceDate: formatDate,
+      total: row.total,
       invoiceItems,
     };
     resultInvoices.push(invoice);

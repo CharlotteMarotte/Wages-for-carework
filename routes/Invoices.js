@@ -1,12 +1,23 @@
 var express = require('express');
 var router = express.Router();
+const { ensureSameUser } = require('../middleware/guards');
 const db = require('../model/helper');
 
+async function getCatAmt() {
+  try {
+    // to get number of categories
+    let sql = `SELECT COUNT(categoryID) AS total FROM categories;`;
+    let results = await db(sql);
+    return results.data[0].total;
+  } catch (error) {
+    res.status(500).send({ error: err.message });
+  }
+}
 
 async function getLastInvoiceID() {
   try {
     // to get number ID of last invoice added to DB
-    let sql = `SELECT MAX(id) AS lastID FROM invoices;`;
+    let sql = `SELECT MAX(invoiceID) AS lastID FROM invoices;`;
     let results = await db(sql);
     return results.data[0].lastID;
   } catch (error) {
@@ -38,22 +49,23 @@ async function joinToJson(results) {
 
     // // Create invoice obj
     let invoice = {
-      id: row.id,
-      nameFrom: row.nameFrom,
-      emailFrom: row.emailFrom,
+      id: row.invoiceID,
+      // nameFrom: row.nameFrom,
+      // emailFrom: row.emailFrom,
       nameTo: row.nameTo,
       emailTo: row.emailTo,
       invoiceDate: row.invoiceDate,
-      amt_householdMem: row.amt_householdMem,
-      amt_children0_6: row.amt_children0_6,
-      amt_children7_18: row.amt_children7_18,
-      amt_flatmates: row.amt_flatmates,
-      amt_partners: row.amt_partners,
-      otherCaringResp: row.otherCaringResp,
-      partner_sexualOrient: row.partner_sexualOrient,
-      partner_relStyle: row.partner_relStyle,
-      employment_status: row.employment_status,
-      domesticHelp: row.domesticHelp,
+      total: row.total,
+      // amt_householdMem: row.amt_householdMem,
+      // amt_children0_6: row.amt_children0_6,
+      // amt_children7_18: row.amt_children7_18,
+      // amt_flatmates: row.amt_flatmates,
+      // amt_partners: row.amt_partners,
+      // otherCaringResp: row.otherCaringResp,
+      // partner_sexualOrient: row.partner_sexualOrient,
+      // partner_relStyle: row.partner_relStyle,
+      // employment_status: row.employment_status,
+      // domesticHelp: row.domesticHelp,
       invoiceItems,
     };
     resultInvoices.push(invoice);
@@ -75,11 +87,13 @@ async function joinLastInvoiceToJson(results) {
 
   // Create author obj
   let invoice = {
-    id: row0.id,
-    nameFrom: row0.nameFrom,
-    emailFrom: row0.emailFrom,
+    id: row0.invoiceID,
+    firstNameFrom: row0.firstname,
+    lastNameFrom: row0.lastname,
+    emailFrom: row0.email,
     nameTo: row0.nameTo,
     emailTo: row0.emailTo,
+    total: row0.total,
     invoiceDate: row0.invoiceDate,
     invoiceItems,
   };
@@ -87,19 +101,42 @@ async function joinLastInvoiceToJson(results) {
   return invoice;
 }
 
-router.get('/', (req, res) => {
+router.get('/', async function (req, res) {
+  // INNER JOIN statistic_data AS s ON i.invoiceID = s.statisticID
   // Send back the full list of invoices joined with name from categories and data from invoice items
-  db(`SELECT i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+
+  try {
+    let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
   FROM invoices AS i
-  INNER JOIN statistic_data AS s ON i.id = s.id
-  INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
-  INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID ORDER BY i.id ASC;`)
-    .then(async (results) => {
-      let invoice = results.data;
-      invoice = await joinToJson(invoice); // joinToJson is async so needs to get called with await
-      res.send(invoice);
-    })
-    .catch((err) => res.status(500).send(err));
+  INNER JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+  INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID ORDER BY i.invoiceID ASC;`;
+
+    let results = await db(sql);
+    // Convert DB results into "sensible" JSON
+    let invoices = await joinToJson(results.data); // joinToJson is async so needs to get called with await
+    res.status(200).send(invoices);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.get('/:id', async function (req, res) {
+  let { id } = req.params;
+  try {
+    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    FROM users AS u 
+    LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+    LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+    INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+    WHERE u.userID='${id}';`;
+
+    let results = await db(sql);
+    // Convert DB results into "sensible" JSON
+    invoice = await joinLastInvoiceToJson(results); // joinToJson is async so needs to get called with await
+    res.status(200).send(invoice);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
 });
 
 router.get('/last-invoice', async function (req, res) {
@@ -107,9 +144,9 @@ router.get('/last-invoice', async function (req, res) {
   try {
     let sql = `SELECT i.*, iIt.hour,  iIt.rate, iIt.amount, c.cat_name
     FROM invoices AS i
-    LEFT OUTER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
-    LEFT OUTER  JOIN categories AS c ON c.id = iIt.fk_categoriesID 
-    WHERE i.id = ${lastInvoiceID};`;
+    LEFT OUTER JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+    LEFT OUTER  JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+    WHERE i.invoiceID = ${lastInvoiceID};`;
 
     let results = await db(sql);
     // Convert DB results into "sensible" JSON
@@ -124,7 +161,7 @@ router.get('/specify/*', async function (req, res) {
   // The request's parameters are available in req.query
   const queryParams = req.query.partner_sexualOrient;
 
-  // Sometimes there happened a weird bug here, so tried to catch the error with this if, try reloading if it happens 
+  // Sometimes there happened a weird bug here, so tried to catch the error with this if, try reloading if it happens
   if (typeof queryParams === 'object' && queryParams.length !== 0) {
     for (let i = 0; i < queryParams.length; i++) {
       queryParams[i] =
@@ -139,9 +176,9 @@ router.get('/specify/*', async function (req, res) {
     }
 
     let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name FROM invoices AS i
-  INNER JOIN invoice_items AS iIt ON i.id = iIt.fk_invoiceID
-  INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE i.id
-  IN (SELECT st.id FROM statistic_data AS st WHERE partner_sexualOrient IN (${queryString}))`; // nested SELECT statement
+  INNER JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+  INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID WHERE i.invoiceID
+  IN (SELECT s.statisticID FROM statistic_data AS s WHERE partner_sexualOrient IN (${queryString}))`; // nested SELECT statement
 
     try {
       let results = await db(sql);
@@ -186,7 +223,7 @@ router.get('/average/:catID', async function (req, res) {
   let catID = Number(req.params.catID);
   try {
     let sql = `SELECT c.cat_name AS catName, AVG(hour) AS avgHour, AVG(rate) AS avgRate, AVG(amount) AS avgAmount 
-    FROM invoice_items AS iIt INNER JOIN categories AS c ON c.id = iIt.fk_categoriesID WHERE fk_categoriesID=${catID};`;
+    FROM invoice_items AS iIt INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID WHERE fk_categoriesID=${catID};`;
     let results = await db(sql);
     let averages = results.data[0];
     // Convert DB results into "sensible" JSON
@@ -215,8 +252,8 @@ router.get('/:id/stats', async function (req, res) {
     // i.id and s.id always match because there is always the same amount of entries in there
     let sql = `SELECT i.*, s.*
     FROM invoices AS i
-    LEFT OUTER JOIN statistic_data AS s ON i.id = s.id 
-    WHERE i.id = ${id};`;
+    LEFT OUTER JOIN statistic_data AS s ON i.invoiceID = s.statisticID 
+    WHERE i.invoiceID = ${id};`;
     let results = await db(sql);
     results = results.data[0];
     // Convert DB results into "sensible" JSON
@@ -230,10 +267,10 @@ router.post('/new', async function (req, res) {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of invoice properties
 
-  const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems } =
+  const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems, total } =
     req.body;
-  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate) 
-                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}');
+  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate, total) 
+                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', ${total});
                 SELECT LAST_INSERT_ID();`;
 
   try {
@@ -254,7 +291,7 @@ router.post('/new', async function (req, res) {
       await db(sql);
     }
     res.status(201);
-    const result = await db('SELECT * FROM invoices ORDER BY id ASC;');
+    const result = await db('SELECT * FROM invoices ORDER BY invoiceID ASC;');
     res.send(result);
   } catch (error) {
     res.status(500).send({ error: err.message });

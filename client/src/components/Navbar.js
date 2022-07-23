@@ -51,7 +51,8 @@ function Navbar(props) {
                 <NavLink
                   className="nav-link active"
                   aria-current="page"
-                  to="/enter-data"
+                  // if user is logged in and has already entered their demographic data go directly to CreateInvoiceView
+                  to={props.user && Object.keys(props.user.demographicData).length !== 0 ? "/create" : "/enter-data"}
                 >
                   Create Invoice
                 </NavLink>
@@ -86,14 +87,14 @@ function Navbar(props) {
               </li>
               {props.user ? (
                 <ul className="navbar-nav">
-                  {/* <li className="nav-item">
+                  <li className="nav-item">
                     <NavLink
                       className="nav-link"
-                      to={`/users/${props.user.id}`}
+                      to={`/profile`}
                     >
-                      Profile ({props.user.username})
+                      Profile
                     </NavLink>
-                  </li> */}
+                  </li>
                   <li className="nav-item">
                     {/* Log out user. Then go to home page. */}
                     <NavLink

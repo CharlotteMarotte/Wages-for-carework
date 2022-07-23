@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import './InvoiceDocView.css';
 import InvoiceDocItem from '../components/InvoiceDocItem';
 
@@ -7,19 +8,20 @@ export default function InvoiceDocView(props) {
   // View to show created invoice after data got submitted
   //
 
+  let { id } = useParams();
+
+
   let [currInvoice, setCurrInvoice] = useState(null); // holds last invoice that got posted to DB
-  let [total, setTotal] = useState(props.ix); // props.ix is invoices.length-1, so index of last invoice if nothing has been deleted (which is not possible right now but method is not ideal)
 
   // to get on rendering all invoices, the last invoice and the total amount of the last invoice
   useEffect(() => {
     props.getInvoicesCb();
-    getLastInvoice();
-    getTotalAmount();
+    getInvoice(id);
   }, []);
 
-  async function getLastInvoice() {
+  async function getInvoice(id) {
     try {
-      let response = await fetch('/invoices/last-invoice'); // does GET by default
+      let response = await fetch(`/invoices/${id}`); // does GET by default
       if (response.ok) {
         let invoiceData = await response.json();
         setCurrInvoice(invoiceData);
@@ -31,32 +33,6 @@ export default function InvoiceDocView(props) {
     }
   }
 
-  async function getTotalAmount(id) {
-    try {
-      let response = await fetch('/invoices/last-invoice'); // does GET by default
-      if (response.ok) {
-        let invoiceData = await response.json();
-        let id = Number(invoiceData.id); // first get id of last invoice
-        try {
-          let response = await fetch(`/invoices/${id}/total`); // to then get total with this id
-          if (response.ok) {
-            let calcTotal = await response.json();
-            setTotal(calcTotal);
-          } else {
-            console.log(
-              `Server error: ${response.status} ${response.statusText}`
-            );
-          }
-        } catch (err) {
-          console.log(`Server error: ${err.message}`);
-        }
-      } else {
-        console.log(`Server error: ${response.status} ${response.statusText}`);
-      }
-    } catch (err) {
-      console.log(`Server error: ${err.message}`);
-    }
-  }
 
   // sometimes a weird bug was occuring where either currInvoice or billCatFromApp was empty, so I tried to catch this error
   if (!currInvoice || !props.billCatFromApp.length) {
@@ -68,7 +44,7 @@ export default function InvoiceDocView(props) {
         <h3>FROM:</h3>
       </div>
       <div className="col-3">
-        <p>{currInvoice.nameFrom}</p>
+        <p>{currInvoice.firstNameFrom + " " + currInvoice.lastNameFrom}</p>
       </div>
 
       <div className="col-3">
@@ -110,7 +86,7 @@ export default function InvoiceDocView(props) {
           />
         ))}
       </div>
-      <p className="offset-10">Total: {total} €</p>
+      <p className="offset-10">Total: {currInvoice.total} €</p>
     </div>
   );
 }

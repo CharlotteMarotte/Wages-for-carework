@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
   // Send back the full list of items
   db(`SELECT *
     FROM statistic_data 
-   ORDER BY id ASC;`)
+   ORDER BY statisticID ASC;`)
     .then(async (results) => {
       let data = results.data;
       res.send(data);
@@ -36,7 +36,7 @@ router.post('/new', async function (req, res) {
     let results = await db(sql);
     // The results contain the new invoice's ID thanks to LAST_INSERT_ID()
     res.status(201);
-    const result = await db('SELECT * FROM statistic_data ORDER BY id ASC;');
+    const result = await db('SELECT * FROM statistic_data ORDER BY statisticID ASC;');
     res.send(result);
   } catch (error) {
     res.status(500).send({ error: err.message });

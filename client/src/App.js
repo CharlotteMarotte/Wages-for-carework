@@ -10,6 +10,8 @@ import Error404View from './views/Error404View';
 import GeneralStatisticsView from './views/GeneralStatisticsView';
 import SpecificStatisticsView from './views/SpecificStatisticsView';
 import EnterDataView from './views/EnterDataView';
+import PrivateRoute from './components/PrivateRoute';
+
 
 import Local from './helpers/Local';
 import Api from './helpers/Api';
@@ -184,6 +186,17 @@ function App() {
               />
             }
           />
+          {/* Route to ProfileView*/}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfileView
+                  user={user}
+                />
+              </PrivateRoute>
+            }
+          />
         <Route
           path="enter-data"
           element={
@@ -194,6 +207,7 @@ function App() {
           path="create"
           element={
             <CreateInvoiceView
+            user={user}
               billCatFromApp={billCats}
               showInvoiceDocCb={showInvoiceDoc}
               addInvoiceCb={addInvoice}
@@ -202,11 +216,11 @@ function App() {
           }
         />
         <Route
-          path="invoices"
+          path="invoices/:id"
           element={
             <InvoiceDocView
               billCatFromApp={billCats}
-              ix={invoices.length - 1} // not ideal way to show last invoice, assumes invoices can never be deleted
+              // ix={invoices.length - 1} // not ideal way to show last invoice, assumes invoices can never be deleted
               getInvoicesCb={getInvoices}
             />
           }

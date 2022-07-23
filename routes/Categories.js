@@ -6,7 +6,7 @@ const db = require("../model/helper");
 /* GET home page. */
 router.get("/", (req, res) => {
   // Send back the full list of items
-  db("SELECT * FROM categories ORDER BY id ASC;")
+  db("SELECT * FROM categories ORDER BY categoryID ASC;")
     .then(results => {
       res.send(results.data);
     })

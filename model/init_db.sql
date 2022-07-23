@@ -53,6 +53,7 @@ CREATE TABLE invoices (
     nameTo varchar(255) NOT NULL,
     emailTo varchar(255) NOT NULL,
     invoiceDate DATE NOT NULL,
+    total INT,
     PRIMARY KEY (invoiceID),
     FOREIGN KEY (fk_userID) REFERENCES users(userID) ON DELETE CASCADE
 );
@@ -173,6 +174,7 @@ INSERT INTO
         fk_userID,
         nameTo,
         emailTo,
+        total,
         invoiceDate
     )
 VALUES
@@ -180,18 +182,21 @@ VALUES
         1,
         'Patriarchy',
         'info@patriarchy.com',
+        465,
         '2022-05-24'
     ),
     (
         2,
         'Patriarcato',
         'info@patriarcato.it',
+        465,
         '2022-07-22'
     ),
     (
         3,
         'Patriarchy',
         'info@patriarchy.uk',
+        465,
         '2022-05-24'
     );
 

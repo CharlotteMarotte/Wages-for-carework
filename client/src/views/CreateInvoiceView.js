@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
 
-const EMPTY_FORM = {
-  nameFrom: '',
-  emailFrom: '',
-  nameTo: 'BFSFJ', // default value German ministery for families
-  emailTo: 'info@bmfsfjservice.bund.de', // default value German ministery for families
-  invoiceDate: new Date().toISOString().slice(0, 10), //gets current date, cuts timestamp off
-};
+
 
 export default function CreateInvoiceView(props) {
   //
   // Form to enter data for the invoice
   //
+
+  const EMPTY_FORM = {
+    nameFrom: props.user ? props.user.firstname + " " + props.user.lastname : '',
+    emailFrom: props.user ? props.user.email : '',
+    nameTo: 'BFSFJ', // default value German ministery for families
+    emailTo: 'info@bmfsfjservice.bund.de', // default value German ministery for families
+    invoiceDate: new Date().toISOString().slice(0, 10), //gets current date, cuts timestamp off
+  };
 
   const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
     CatId: c.id,
@@ -68,6 +70,7 @@ export default function CreateInvoiceView(props) {
   // gets called when submit gets pressed
   const handleSubmit = (e) => {
     e.preventDefault();
+    contactData.total = total;
     props.addInvoiceCb(contactData); // pass data back up to parent using props.addInvoiceCb();
     props.showInvoiceDocCb(); // show created invoice
     // empty form after set
@@ -84,7 +87,7 @@ export default function CreateInvoiceView(props) {
   }
 
   return (
-    <div className="createInvoiceView col-6 offset-3">
+    <div className="createInvoiceView col-6 offset-3 ">
       {/* add handleSubmit function to onSubmit event */}
       <form className="offset-1 row g-3 col-10 pb-10" onSubmit={handleSubmit}>
         <h3>FROM</h3>
@@ -93,6 +96,7 @@ export default function CreateInvoiceView(props) {
             Name
           </label>
           <input
+            readOnly={props.user ? true : false}
             required
             type="text"
             name="nameFrom"
@@ -107,6 +111,7 @@ export default function CreateInvoiceView(props) {
             Email
           </label>
           <input
+            readOnly={props.user ? true : false}
             required
             type="email"
             className="form-control"
