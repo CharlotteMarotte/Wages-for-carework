@@ -100,7 +100,7 @@ function SignUpView(props) {
           </div>
 
           <div className="mt-3 d-grid px-3">
-            <button className="btn btn-primary btn-block btn-signup text-uppercase">
+            <button className="btn btn-dark btn-block btn-signup text-uppercase">
               <span>Signup</span>
             </button>
           </div>

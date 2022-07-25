@@ -67,13 +67,13 @@ export default function InvoiceDocView(props) {
       <div className="col-12 Date offset-2 mb-3">
         <h3>INVOICE NO: {currInvoice.id} </h3>
       </div>
-      <div className="row row-cols-12 border-top border-bottom border-danger border-3 py-2">
+      <div className="row row-cols-12 border-top border-bottom border-dark border-3 py-2">
         <h4 className="col-3">Category</h4>
         <h4 className="col-3">Rate</h4>
         <h4 className="col-3">Hours</h4>
         <h4 className="col-3">Amount</h4>
       </div>
-      <div className="row row-cols-12 border-bottom border-danger border-3 my-3">
+      <div className="row row-cols-12 border-bottom border-dark border-3 my-3">
         {/* similar to map function in CreatInvoiceView, maps over all invoiceItems in last invoice to create lines with rate, hours, amount for invoice */}
         {currInvoice.invoiceItems.map(
           (

@@ -18,6 +18,7 @@ import Api from './helpers/Api';
 import LoginView from './views/LoginView';
 import ProfileView from './views/ProfileView';
 import SignUpView from './views/SignUpView';
+import EditProfileView from './views/EditProfileView';
 
 function App() {
   //
@@ -76,20 +77,29 @@ function App() {
     setUser(null);
   }
 
-  // // gets all entries in invoices data, see routes/Invoices for implementation
-  // async function getInvoices() {
-  //   try {
-  //     let response = await fetch('/invoices'); // does GET by default
-  //     if (response.ok) {
-  //       let invoiceData = await response.json();
-  //       setInvoices(invoiceData);
-  //     } else {
-  //       console.log(`Server error: ${response.status} ${response.statusText}`);
-  //     }
-  //   } catch (err) {
-  //     console.log(`Server error: ${err.message}`);
-  //   }
-  // }
+  async function updateUser(userData) {
+    console.log("myd", userData)
+    let response = await Api.updateUser(user.id, userData); // do POST
+    try {
+      if (response.ok) {
+        let { firstname, lastname, email, username } = response.data;
+
+        setUser((state) => ({
+          ...state, // gets replaced by all key-value pairs from obj
+          firstname,
+          lastname,
+          email,
+          username,
+        }));
+
+        navigate('/profile'); // navigates to updated profile
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
 
   // gets passed as a prop to CreateInvoice View
   async function addInvoice(invoiceData) {
@@ -100,7 +110,7 @@ function App() {
         await getCountInvoices(); // get updated invoices count
         setUser((state) => ({
           ...state, // gets replaced by all key-value pairs from obj
-          invoices: response.data.invoices // sets updated invoices from this user
+          invoices: response.data.invoices, // sets updated invoices from this user
         }));
 
         navigate(`/invoices/${response.data.lastInvoiceID}`); // navigates to invoice with ID of added invoice
@@ -112,25 +122,24 @@ function App() {
     }
   }
 
-    // gets passed as a prop to Profile View
-    async function deleteInvoice(id) {
-      let body = {invoiceID: id, userID: user.id}
-      let response = await Api.deleteInvoice(body);
-      try {
-        if (response.ok) {
-          await getCountInvoices(); // get updated invoices count
-          setUser((state) => ({
-            ...state, // gets replaced by all key-value pairs from obj
-            invoices: response.data // sets updated invoices from this user
-          }));
-          console.log(response.data);
-          } else {
-          console.log(`Server error: ${response.status} ${response.statusText}`);
-        }
-      } catch (err) {
-        console.log(`Server error: ${err.message}`);
+  // gets passed as a prop to Profile View
+  async function deleteInvoice(invoiceID) {
+    let response = await Api.deleteInvoice(invoiceID, { userID: user.id });
+    try {
+      if (response.ok) {
+        await getCountInvoices(); // get updated invoices count
+        setUser((state) => ({
+          ...state, // gets replaced by all key-value pairs from obj
+          invoices: response.data, // sets updated invoices from this user
+        }));
+        console.log(response.data);
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
       }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
     }
+  }
 
   async function addStatisticData(data) {
     let response = await Api.addStatisticData(data);
@@ -148,7 +157,7 @@ function App() {
   }
 
   async function getBillCats() {
-    let response = await Api.getContent('/bill-cats'); 
+    let response = await Api.getContent('/bill-cats');
     try {
       if (response.ok) {
         let categories = response.data;
@@ -205,7 +214,15 @@ function App() {
           path="/profile"
           element={
             <PrivateRoute>
-              <ProfileView user={user} deleteInvoiceCb={deleteInvoice}/>
+              <ProfileView user={user} deleteInvoiceCb={deleteInvoice} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <PrivateRoute>
+              <EditProfileView user={user} updateUserCb={updateUser}/>
             </PrivateRoute>
           }
         />

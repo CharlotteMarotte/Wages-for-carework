@@ -184,8 +184,8 @@ export default function CreateInvoiceView(props) {
           />
         </div>
 
-        <div className="container col-12 border-bottom border-danger border-3 ">
-          <div className="row row-cols-12 border-bottom border-danger border-3">
+        <div className="container col-12 border-bottom border-dark border-3 ">
+          <div className="row row-cols-12 border-bottom border-dark border-3">
             <div className="col-1"> </div>
             <h4 className="col">Description</h4>
             <h4 className="col-2">Rate</h4>
@@ -209,11 +209,11 @@ export default function CreateInvoiceView(props) {
             <p>A problem occured.</p>
           )}
         </div>
-        <p className="offset-10">Total: {total} €</p>
-        <div className="offset-5">
+        <p className="offset-10 mb-0">Total: {total} €</p>
+        <div className="offset-5 mb-5">
           <button
             type="submit"
-            className="btn btn-outline-danger outline-2 pmd-ripple-effect"
+            className="btn btn-outline-dark"
           >
             Submit
           </button>

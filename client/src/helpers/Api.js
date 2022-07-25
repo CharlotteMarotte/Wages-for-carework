@@ -42,9 +42,17 @@ class Api {
    * Get data for user with ID 'userId'
    **/
 
-  static async getUser(userId) {
-    return await this._doFetch(`/users/${userId}`);
+  static async getUser(userID) {
+    return await this._doFetch(`/users/${userID}`);
   }
+
+   /**
+   * Update data for user with ID 'userId'
+   **/
+
+    static async updateUser(userID, body) {
+      return await this._doFetch(`/users/${userID}`, 'PUT', body);
+    }
 
   /**
    * Add a new invoice with data from user input form
@@ -66,9 +74,8 @@ class Api {
    * Delete invoice with ID 'invoiceID'
    **/
 
-  static async deleteInvoice(body) {
-    console.log('called', body);
-    return await this._doFetch(`/invoices/${body.invoiceID}`, 'DELETE', body);
+  static async deleteInvoice(invoiceID, body) {
+    return await this._doFetch(`/invoices/${invoiceID}`, 'DELETE', body);
   }
 
   /**

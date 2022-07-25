@@ -69,7 +69,7 @@ export default function StatsParams(props) {
         </div>
       </div>
       <div className="offset-5 mt-3">
-        <button type="submit" className="btn btn-outline-danger outline-2 pmd-ripple-effect">
+        <button type="submit" className="btn btn-outline-dark outline-2 pmd-ripple-effect">
           Show
         </button>
       </div>

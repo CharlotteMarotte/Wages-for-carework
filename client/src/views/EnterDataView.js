@@ -306,7 +306,7 @@ export default function EnterDataView(props) {
         <div className="offset-5">
           <button
             type="submit"
-            className="btn btn-outline-danger outline-2 pmd-ripple-effect"
+            className="btn btn-outline-dark outline-2 pmd-ripple-effect"
           >
             Continue
           </button>

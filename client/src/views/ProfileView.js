@@ -17,7 +17,7 @@ function ProfileView(props) {
             <div className="card mb-3" style={{ borderRadius: '.5rem' }}>
               <div className="row g-0">
                 <div
-                  className="col-md-4 gradient-custom text-center text-white mt-3"
+                  className="col-md-4 gradient-custom text-center text-white mt-3 d-flex align-content-md-center flex-wrap"
                   style={{
                     borderTopLeftRadius: '.5rem',
                     borderBottomLeftRadius: '.5rem',
@@ -47,31 +47,49 @@ function ProfileView(props) {
                         <p className="text-secondary">{props.user.username}</p>
                       </div>
                     </div>
+                    <div className="col-8 mb-3">
+                      <Link
+                        to="/edit-profile"
+                        className="btn btn-outline-dark text-uppercase d-inline p-2 m-1 justify-content-center"
+                      >
+                        Edit Profile
+                      </Link>
+                      <Link
+                        to=""
+                        className="btn btn-outline-secondary text-uppercase d-inline d-inline p-2 m-1 justify-content-center"
+                      >
+                        Demographic Data
+                      </Link>
+                    </div>
                     <h6>Invoices</h6>
                     <hr className="mt-0 mb-4" />
-                      <div class="row col-10 offset-1">
-                        {props.user.invoices.map((i) => (
-                          <div className="card me-auto col-5 p-3 m-1" key={i.id}>
-                            <div className="b-3">
-                              <h6>TO: {i.nameTo}</h6>
-                              <p className="text-muted">
-                                DATE: {i.invoiceDate.slice(0, 10)}
-                              </p>
-                              <Link
-                                to={`/invoices/${i.id}`}
-                                className="btn btn-outline-primary btn-signup text-uppercase me-2"
-                              >
-                                View
-                              </Link>
-                              <button
-                                className="btn btn-outline-secondary btn-signup text-uppercase"
-                                onClick={(e) => props.deleteInvoiceCb(i.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
+                    <div className="row col-10 offset-1">
+                      {props.user.invoices.map((i) => (
+                        <div
+                          className="card me-auto col-12 p-3 m-1 justify-content-center"
+                          key={i.id}
+                        >
+                          <div className="b-3">
+                            <p>TO: {i.nameTo}</p>
+                            <p className="text-muted">
+                              DATE: {i.invoiceDate.slice(0, 10)}
+                            </p>
+                            
+                            <button
+                              className="btn btn-outline-secondary btn-signup text-uppercase me-2"
+                              onClick={(e) => props.deleteInvoiceCb(i.id)}
+                            >
+                              Delete
+                            </button>
+                            <Link
+                              to={`/invoices/${i.id}`}
+                              className="btn btn-outline-dark btn-signup text-uppercase me-2"
+                            >
+                              View
+                            </Link>
                           </div>
-                        ))}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
