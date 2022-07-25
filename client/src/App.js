@@ -36,7 +36,6 @@ function App() {
   // gets all categories and all invoices that exist at the moment of rendering of the App
   useEffect(() => {
     getBillCats();
-    getInvoices();
   }, []);
 
   //
@@ -77,36 +76,28 @@ function App() {
     setUser(null);
   }
 
-  // gets all entries in invoices data, see routes/Invoices for implementation
-  async function getInvoices() {
-    try {
-      let response = await fetch('/invoices'); // does GET by default
-      if (response.ok) {
-        let invoiceData = await response.json();
-        setInvoices(invoiceData);
-      } else {
-        console.log(`Server error: ${response.status} ${response.statusText}`);
-      }
-    } catch (err) {
-      console.log(`Server error: ${err.message}`);
-    }
-  }
+  // // gets all entries in invoices data, see routes/Invoices for implementation
+  // async function getInvoices() {
+  //   try {
+  //     let response = await fetch('/invoices'); // does GET by default
+  //     if (response.ok) {
+  //       let invoiceData = await response.json();
+  //       setInvoices(invoiceData);
+  //     } else {
+  //       console.log(`Server error: ${response.status} ${response.statusText}`);
+  //     }
+  //   } catch (err) {
+  //     console.log(`Server error: ${err.message}`);
+  //   }
+  // }
 
   // gets passed as a prop to CreateInvoice View
   async function addInvoice(invoiceData) {
-    // Define fetch() options
-    let options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(invoiceData),
-    };
-
+  
+   let response = await Api.addInvoice(invoiceData);
     try {
-      let response = await fetch('/invoices/new', options); // do POST
       if (response.ok) {
-        let invoices = await response.json(); // set invoices state with all invoices including new ones
+        let invoices = response.data;
         setInvoices(invoices);
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
@@ -117,19 +108,11 @@ function App() {
   }
 
   async function addStatisticData(data) {
-    // Define fetch() options
-    let options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    };
+    let response = await Api.addStatisticData(data);
 
     try {
-      let response = await fetch('/statistics/new', options); // do POST
       if (response.ok) {
-        let statistics = await response.json();
+        let statistics = response.data;
         setStatistics(statistics); // set statistics state with all invoices including new ones
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
@@ -140,10 +123,10 @@ function App() {
   }
 
   async function getBillCats() {
+    let response = await Api.getContent('/bill-cats'); // 
     try {
-      let response = await fetch('/bill-cats'); // does GET by default
       if (response.ok) {
-        let categories = await response.json();
+        let categories = response.data;
         setBillCats(categories); // set billCats state with all categories, so it can be used by other components/views
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
@@ -221,7 +204,7 @@ function App() {
             <InvoiceDocView
               billCatFromApp={billCats}
               // ix={invoices.length - 1} // not ideal way to show last invoice, assumes invoices can never be deleted
-              getInvoicesCb={getInvoices}
+              // getInvoicesCb={getInvoices}
             />
           }
         />

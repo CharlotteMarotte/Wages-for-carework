@@ -51,6 +51,22 @@ class Api {
         return await this._doFetch(`/users/${userId}`);
     }
 
+     /**
+     * Get data for user with ID 'userId'
+     **/
+
+      static async addInvoice(invoiceData) {
+        return await this._doFetch('/invoices/new', 'POST', invoiceData);    
+    }
+
+       /**
+     * Get data for user with ID 'userId'
+     **/
+
+        static async addStatisticData(data) {
+            return await this._doFetch('/statistics/new', 'POST', data);    
+        }
+
     /**
      * General purpose GET (for URLs like /members-only)
      **/

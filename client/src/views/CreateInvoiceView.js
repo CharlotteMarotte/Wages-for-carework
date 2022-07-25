@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CreateInvoiceView.css';
 import InvoiceItem from '../components/InvoiceItem';
-
-
 
 export default function CreateInvoiceView(props) {
   //
@@ -10,23 +8,32 @@ export default function CreateInvoiceView(props) {
   //
 
   const EMPTY_FORM = {
-    nameFrom: props.user ? props.user.firstname + " " + props.user.lastname : '',
+    nameFrom: props.user
+      ? props.user.firstname + ' ' + props.user.lastname
+      : '',
     emailFrom: props.user ? props.user.email : '',
     nameTo: 'BFSFJ', // default value German ministery for families
     emailTo: 'info@bmfsfjservice.bund.de', // default value German ministery for families
     invoiceDate: new Date().toISOString().slice(0, 10), //gets current date, cuts timestamp off
   };
 
-  const EMPTY_IT_FORM = props.billCatFromApp.map((c) => ({
-    CatId: c.id,
-    rate: 9.5,
-    hours: 0,
-    amount: 0,
-  }));
-
   const [contactData, setContactData] = useState(EMPTY_FORM); // holds contact data
-  const [invoiceItems, setInvoiceItems] = useState(EMPTY_IT_FORM); // holds invoice items data
+  const [invoiceItems, setInvoiceItems] = useState([]); // holds invoice items data
   const [total, setTotal] = useState(0); // holds total of all amounts of invoice
+
+  useEffect(() => {
+    createInvoiceItems();
+  }, [props.billCatFromApp]);
+
+  function createInvoiceItems() {
+    let resultArr = props.billCatFromApp.map((c) => ({
+      catId: c.categoryID,
+      rate: 9.5,
+      hours: 0,
+      amount: 0,
+    }));
+    setInvoiceItems(resultArr);
+  }
 
   // gets called every time number input field is updated
   const addInvoiceItem = (event) => {
@@ -38,8 +45,9 @@ export default function CreateInvoiceView(props) {
     // looks for index of element in invoiceItems array where the category ID matches the one it got data from the InvoiceItem from
     let newArray = [...invoiceItems];
     let ix = newArray.findIndex(
-      (i) => i.CatId === Number(event.target.name.split('-')[1]) // on right side of - is category number
+      (i) => i.catId === Number(event.target.name.split('-')[1]) // on right side of - is category number
     );
+
     newArray[ix][name] = value;
     newArray[ix].amount = newArray[ix].rate * newArray[ix].hours; // calculates amount on every change of number input field
     setInvoiceItems((state) => newArray); // updates invoice items state
@@ -71,6 +79,7 @@ export default function CreateInvoiceView(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     contactData.total = total;
+    contactData.fk_userID = props.user.id; // adds user id of user logged in
     props.addInvoiceCb(contactData); // pass data back up to parent using props.addInvoiceCb();
     props.showInvoiceDocCb(); // show created invoice
     // empty form after set
@@ -87,7 +96,7 @@ export default function CreateInvoiceView(props) {
   }
 
   return (
-    <div className="createInvoiceView col-6 offset-3 ">
+    <div className="createInvoiceView col-6 offset-3 mb-10">
       {/* add handleSubmit function to onSubmit event */}
       <form className="offset-1 row g-3 col-10 pb-10" onSubmit={handleSubmit}>
         <h3>FROM</h3>
@@ -191,7 +200,7 @@ export default function CreateInvoiceView(props) {
             props.billCatFromApp.map((c) => (
               // arrow function, so it doesn't get called immediately but only after a click
               <InvoiceItem
-                key={c.id}
+                key={c.categoryID}
                 billCatFromApp={c}
                 addInvoiceItemCb={addInvoiceItem}
                 invoiceItemsFromCreate={invoiceItems}

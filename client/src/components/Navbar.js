@@ -47,17 +47,6 @@ function Navbar(props) {
                 </NavLink>
               </li>
 
-              <li className="nav-item px-3">
-                <NavLink
-                  className="nav-link active"
-                  aria-current="page"
-                  // if user is logged in and has already entered their demographic data go directly to CreateInvoiceView
-                  to={props.user && Object.keys(props.user.demographicData).length !== 0 ? "/create" : "/enter-data"}
-                >
-                  Create Invoice
-                </NavLink>
-              </li>
-
               {/* Navbar with options for statistics */}
               <li className="nav-item dropdown px-3">
                 <a
@@ -87,11 +76,23 @@ function Navbar(props) {
               </li>
               {props.user ? (
                 <ul className="navbar-nav">
-                  <li className="nav-item">
+                  <li className="nav-item px-3">
                     <NavLink
-                      className="nav-link"
-                      to={`/profile`}
+                      className="nav-link active"
+                      aria-current="page"
+                      // if user is logged in and has already entered their demographic data go directly to CreateInvoiceView
+                      to={
+                        props.user &&
+                        Object.keys(props.user.demographicData).length !== 0
+                          ? '/create'
+                          : '/enter-data'
+                      }
                     >
+                      Create Invoice
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to={`/profile`}>
                       Profile
                     </NavLink>
                   </li>

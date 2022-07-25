@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Api from '../helpers/Api';
+import React, { useState } from 'react';
+import {Link } from 'react-router-dom';
 
 function ProfileView(props) {
   const [errorMsg, setErrorMsg] = useState('');
@@ -18,20 +17,19 @@ function ProfileView(props) {
             <div className="card mb-3" style={{ borderRadius: '.5rem' }}>
               <div className="row g-0">
                 <div
-                  className="col-md-4 gradient-custom text-center text-white"
+                  className="col-md-4 gradient-custom text-center text-white mt-3"
                   style={{
                     borderTopLeftRadius: '.5rem',
                     borderBottomLeftRadius: '.5rem',
                   }}
                 >
                   <img
-                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                    src="https://www.medicalcost.com/wp-content/uploads/2012/04/HiRes_WOMAN.png"
                     alt="Avatar"
-                    className="img-fluid my-5"
+                    className="img-fluid my-3"
                     style={{ width: '80px' }}
                   />
                   <h5 className="text-dark">{props.user.firstname + ' ' + props.user.lastname}</h5>
-                  <i className="far fa-edit mb-5"></i>
                 </div>
                 <div className="col-md-8">
                   <div className="card-body p-4">
@@ -54,7 +52,7 @@ function ProfileView(props) {
                         <div className="col-6 mb-3">
                           <h6>{i.nameTo}</h6>
                           <p className="text-muted">{i.invoiceDate.slice(0, 10)}</p>
-                          <button className="btn btn-outline-primary btn-signup text-uppercase" type="button">View</button>
+                          <Link to={`/invoices/${i.id}`} className="btn btn-outline-primary btn-signup text-uppercase">View</Link>
 
                         </div>
                       </div>

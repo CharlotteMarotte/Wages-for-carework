@@ -267,10 +267,10 @@ router.post('/new', async function (req, res) {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of invoice properties
 
-  const { nameFrom, emailFrom, nameTo, emailTo, invoiceDate, invoiceItems, total } =
+  const { emailFrom, nameTo, emailTo, invoiceDate, invoiceItems, total, fk_userID } =
     req.body;
-  const sql = `INSERT INTO invoices (nameFrom, emailFrom, nameTo, emailTo, invoiceDate, total) 
-                VALUES ('${nameFrom}', '${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', ${total});
+  const sql = `INSERT INTO invoices (nameTo, emailTo, invoiceDate, total, fk_userID) 
+                VALUES ('${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', ${total}, ${fk_userID});
                 SELECT LAST_INSERT_ID();`;
 
   try {

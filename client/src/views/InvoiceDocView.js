@@ -15,7 +15,6 @@ export default function InvoiceDocView(props) {
 
   // to get on rendering all invoices, the last invoice and the total amount of the last invoice
   useEffect(() => {
-    props.getInvoicesCb();
     getInvoice(id);
   }, []);
 
