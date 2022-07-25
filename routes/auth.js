@@ -24,7 +24,6 @@ async function joinToJson(results) {
   // send back length of categories table
 
   let resultInvoices = [];
-  console.log(catAmt);
 
   for (let i = 0; i < results.length; i += catAmt) {
     let row = results[i];

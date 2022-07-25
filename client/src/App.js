@@ -12,7 +12,6 @@ import SpecificStatisticsView from './views/SpecificStatisticsView';
 import EnterDataView from './views/EnterDataView';
 import PrivateRoute from './components/PrivateRoute';
 
-
 import Local from './helpers/Local';
 import Api from './helpers/Api';
 
@@ -25,17 +24,18 @@ function App() {
   // Declare state/reactive variables with initial values
   //
   const navigate = useNavigate();
-  let [billCats, setBillCats] = useState([]); // when App is rendered all categories will be fetched from DB and stored here
-  let [invoices, setInvoices] = useState([]); // when App is rendered all invoides will be fetched from DB and stored here and when a invoice is added this state will get updated
-  let [statistics, setStatistics] = useState([]); // this gets set with all entries in statistic_data table when data is added to be stored until data is submitted by form in
+  const [billCats, setBillCats] = useState([]); // when App is rendered all categories will be fetched from DB and stored here
+  const [invoices, setInvoices] = useState([]); // when App is rendered all invoides will be fetched from DB and stored here and when a invoice is added this state will get updated
+  const [statistics, setStatistics] = useState([]); // this gets set with all entries in statistic_data table when data is added to be stored until data is submitted by form in
   const [user, setUser] = useState(Local.getUser());
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
   const [registerErrorMsg, setRegisterErrorMsg] = useState('');
-
+  const [countInvoices, setCountInvoices] = useState(0);
 
   // gets all categories and all invoices that exist at the moment of rendering of the App
   useEffect(() => {
     getBillCats();
+    getCountInvoices();
   }, []);
 
   //
@@ -93,12 +93,17 @@ function App() {
 
   // gets passed as a prop to CreateInvoice View
   async function addInvoice(invoiceData) {
-  
-   let response = await Api.addInvoice(invoiceData);
+    invoiceData.fk_userID = user.id; // adds user id of user logged in
+    let response = await Api.addInvoice(invoiceData);
     try {
       if (response.ok) {
-        let invoices = response.data;
-        setInvoices(invoices);
+        await getCountInvoices(); // get updated invoices count
+        setUser((state) => ({
+          ...state, // gets replaced by all key-value pairs from obj
+          invoices: response.data.invoices // sets updated invoices from this user
+        }));
+
+        navigate(`/invoices/${response.data.lastInvoiceID}`); // navigates to invoice with ID of added invoice
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -106,6 +111,26 @@ function App() {
       console.log(`Server error: ${err.message}`);
     }
   }
+
+    // gets passed as a prop to Profile View
+    async function deleteInvoice(id) {
+      let body = {invoiceID: id, userID: user.id}
+      let response = await Api.deleteInvoice(body);
+      try {
+        if (response.ok) {
+          await getCountInvoices(); // get updated invoices count
+          setUser((state) => ({
+            ...state, // gets replaced by all key-value pairs from obj
+            invoices: response.data // sets updated invoices from this user
+          }));
+          console.log(response.data);
+          } else {
+          console.log(`Server error: ${response.status} ${response.statusText}`);
+        }
+      } catch (err) {
+        console.log(`Server error: ${err.message}`);
+      }
+    }
 
   async function addStatisticData(data) {
     let response = await Api.addStatisticData(data);
@@ -123,7 +148,7 @@ function App() {
   }
 
   async function getBillCats() {
-    let response = await Api.getContent('/bill-cats'); // 
+    let response = await Api.getContent('/bill-cats'); 
     try {
       if (response.ok) {
         let categories = response.data;
@@ -136,8 +161,17 @@ function App() {
     }
   }
 
-  function showInvoiceDoc() {
-    navigate('/invoices'); // redirect to /invoices
+  async function getCountInvoices() {
+    let response = await Api.getContent('/invoices/count');
+    try {
+      if (response.ok) {
+        setCountInvoices(response.data.count); // set countInvoices state with amount of invoices
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
   }
 
   function continueFromStatistics(data) {
@@ -147,39 +181,34 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar user={user} logoutCb={doLogout}/>
+      <Navbar user={user} logoutCb={doLogout} />
       <Routes>
         <Route path="/" element={<HomeView invoicesFromApp={invoices} />} />
         <Route path="about" element={<AboutView />} />
         <Route
-            path="/login"
-            element={
-              <LoginView
-                loginCb={(u, p) => doLogin(u, p)}
-                loginError={loginErrorMsg}
-              />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <SignUpView
-                addUserCb={addUser}
-                registerError={registerErrorMsg}
-              />
-            }
-          />
-          {/* Route to ProfileView*/}
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfileView
-                  user={user}
-                />
-              </PrivateRoute>
-            }
-          />
+          path="/login"
+          element={
+            <LoginView
+              loginCb={(u, p) => doLogin(u, p)}
+              loginError={loginErrorMsg}
+            />
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <SignUpView addUserCb={addUser} registerError={registerErrorMsg} />
+          }
+        />
+        {/* Route to ProfileView*/}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfileView user={user} deleteInvoiceCb={deleteInvoice}/>
+            </PrivateRoute>
+          }
+        />
         <Route
           path="enter-data"
           element={
@@ -190,11 +219,10 @@ function App() {
           path="create"
           element={
             <CreateInvoiceView
-            user={user}
+              user={user}
               billCatFromApp={billCats}
-              showInvoiceDocCb={showInvoiceDoc}
               addInvoiceCb={addInvoice}
-              nextNo={invoices.length + 1} // invoice numbers started with 1, so last invoice has number invoice.length
+              nextNo={countInvoices + 1} // invoice numbers started with 1, so last invoice has number invoice.length
             />
           }
         />

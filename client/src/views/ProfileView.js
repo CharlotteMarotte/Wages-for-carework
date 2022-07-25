@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function ProfileView(props) {
   const [errorMsg, setErrorMsg] = useState('');
@@ -11,9 +11,9 @@ function ProfileView(props) {
   return (
     //    Code thanks to https://mdbootstrap.com/docs/standard/extended/profiles/
     <section className="vh-100">
-      <div className="container py-5 h-100">
+      <div className="container py-5 h-100 mx-auto">
         <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col col-lg-6 mb-4 mb-lg-0">
+          <div className="col col-lg-9 mb-4 mb-lg-0">
             <div className="card mb-3" style={{ borderRadius: '.5rem' }}>
               <div className="row g-0">
                 <div
@@ -29,7 +29,9 @@ function ProfileView(props) {
                     className="img-fluid my-3"
                     style={{ width: '80px' }}
                   />
-                  <h5 className="text-dark">{props.user.firstname + ' ' + props.user.lastname}</h5>
+                  <h5 className="text-dark">
+                    {props.user.firstname + ' ' + props.user.lastname}
+                  </h5>
                 </div>
                 <div className="col-md-8">
                   <div className="card-body p-4">
@@ -47,16 +49,30 @@ function ProfileView(props) {
                     </div>
                     <h6>Invoices</h6>
                     <hr className="mt-0 mb-4" />
-                    {props.user.invoices.map((i) => (
-                      <div className="row pt-1" key={i.id}>
-                        <div className="col-6 mb-3">
-                          <h6>{i.nameTo}</h6>
-                          <p className="text-muted">{i.invoiceDate.slice(0, 10)}</p>
-                          <Link to={`/invoices/${i.id}`} className="btn btn-outline-primary btn-signup text-uppercase">View</Link>
-
-                        </div>
-                      </div>
-                    ))}
+                      <div class="row col-10 offset-1">
+                        {props.user.invoices.map((i) => (
+                          <div className="card me-auto col-5 p-3 m-1" key={i.id}>
+                            <div className="b-3">
+                              <h6>TO: {i.nameTo}</h6>
+                              <p className="text-muted">
+                                DATE: {i.invoiceDate.slice(0, 10)}
+                              </p>
+                              <Link
+                                to={`/invoices/${i.id}`}
+                                className="btn btn-outline-primary btn-signup text-uppercase me-2"
+                              >
+                                View
+                              </Link>
+                              <button
+                                className="btn btn-outline-secondary btn-signup text-uppercase"
+                                onClick={(e) => props.deleteInvoiceCb(i.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>

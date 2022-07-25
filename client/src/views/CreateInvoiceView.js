@@ -8,10 +8,8 @@ export default function CreateInvoiceView(props) {
   //
 
   const EMPTY_FORM = {
-    nameFrom: props.user
-      ? props.user.firstname + ' ' + props.user.lastname
-      : '',
-    emailFrom: props.user ? props.user.email : '',
+    // nameFrom: props.user ? props.user.firstname + ' ' + props.user.lastname : '',
+    // emailFrom: props.user ? props.user.email : '',
     nameTo: 'BFSFJ', // default value German ministery for families
     emailTo: 'info@bmfsfjservice.bund.de', // default value German ministery for families
     invoiceDate: new Date().toISOString().slice(0, 10), //gets current date, cuts timestamp off
@@ -62,7 +60,6 @@ export default function CreateInvoiceView(props) {
     setContactData((state) => ({
       ...state, // gets replaced by all key-value pairs from obj
       [name]: value, // updates key [name] with new value
-      invoiceItems, // when one field of contact data is first updated invoice items array is added (and again every time contact data gets updated), so it can get passed together on submit
     }));
   };
 
@@ -79,9 +76,8 @@ export default function CreateInvoiceView(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     contactData.total = total;
-    contactData.fk_userID = props.user.id; // adds user id of user logged in
+    contactData.invoiceItems = invoiceItems; // adds invoiceItems for submit
     props.addInvoiceCb(contactData); // pass data back up to parent using props.addInvoiceCb();
-    props.showInvoiceDocCb(); // show created invoice
     // empty form after set
     setContactData(EMPTY_FORM);
   };
@@ -105,12 +101,13 @@ export default function CreateInvoiceView(props) {
             Name
           </label>
           <input
-            readOnly={props.user ? true : false}
+            readOnly
+            // ={props.user ? true : false}
             required
             type="text"
             name="nameFrom"
-            value={contactData.nameFrom}
-            onChange={(e) => handleInputChange(e)}
+            value={props.user.firstname + ' ' + props.user.lastname}
+            // onChange={(e) => handleInputChange(e)}
             className="form-control"
             id="inputNameFrom"
           />
@@ -120,14 +117,15 @@ export default function CreateInvoiceView(props) {
             Email
           </label>
           <input
-            readOnly={props.user ? true : false}
+            readOnly
+            // ={props.user ? true : false}
             required
             type="email"
             className="form-control"
             id="inputEmailFrom"
             name="emailFrom"
-            value={contactData.emailFrom}
-            onChange={(e) => handleInputChange(e)}
+            value={props.user.email}
+            // onChange={(e) => handleInputChange(e)}
           />
         </div>
         <h3>TO</h3>

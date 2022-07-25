@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './InvoiceDocView.css';
 import InvoiceDocItem from '../components/InvoiceDocItem';
+import Api from '../helpers/Api';
 
 export default function InvoiceDocView(props) {
   //
@@ -9,7 +10,6 @@ export default function InvoiceDocView(props) {
   //
 
   let { id } = useParams();
-
 
   let [currInvoice, setCurrInvoice] = useState(null); // holds last invoice that got posted to DB
 
@@ -19,11 +19,11 @@ export default function InvoiceDocView(props) {
   }, []);
 
   async function getInvoice(id) {
+    let response = await Api.getInvoice(id);
     try {
-      let response = await fetch(`/invoices/${id}`); // does GET by default
       if (response.ok) {
-        let invoiceData = await response.json();
-        setCurrInvoice(invoiceData);
+        let invoice = response.data;
+        setCurrInvoice(invoice); // set billCats state with all categories, so it can be used by other components/views
       } else {
         console.log(`Server error: ${response.status} ${response.statusText}`);
       }
@@ -31,7 +31,6 @@ export default function InvoiceDocView(props) {
       console.log(`Server error: ${err.message}`);
     }
   }
-
 
   // sometimes a weird bug was occuring where either currInvoice or billCatFromApp was empty, so I tried to catch this error
   if (!currInvoice || !props.billCatFromApp.length) {
@@ -43,7 +42,7 @@ export default function InvoiceDocView(props) {
         <h3>FROM:</h3>
       </div>
       <div className="col-3">
-        <p>{currInvoice.firstNameFrom + " " + currInvoice.lastNameFrom}</p>
+        <p>{currInvoice.firstNameFrom + ' ' + currInvoice.lastNameFrom}</p>
       </div>
 
       <div className="col-3">
@@ -76,14 +75,19 @@ export default function InvoiceDocView(props) {
       </div>
       <div className="row row-cols-12 border-bottom border-danger border-3 my-3">
         {/* similar to map function in CreatInvoiceView, maps over all invoiceItems in last invoice to create lines with rate, hours, amount for invoice */}
-        {currInvoice.invoiceItems.map((it, index) => ( // index as second argument because React needs something for key property
-          // arrow function, so it doesn't get called immediately but only after a click
-          <InvoiceDocItem
-            key={index}
-            billCatFromApp={props.billCatFromApp}
-            invoiceFromDoc={it}
-          />
-        ))}
+        {currInvoice.invoiceItems.map(
+          (
+            it,
+            index // index as second argument because React needs something for key property
+          ) => (
+            // arrow function, so it doesn't get called immediately but only after a click
+            <InvoiceDocItem
+              key={index}
+              billCatFromApp={props.billCatFromApp}
+              invoiceFromDoc={it}
+            />
+          )
+        )}
       </div>
       <p className="offset-10">Total: {currInvoice.total} €</p>
     </div>

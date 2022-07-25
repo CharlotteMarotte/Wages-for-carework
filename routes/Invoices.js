@@ -3,30 +3,163 @@ var router = express.Router();
 const { ensureSameUser } = require('../middleware/guards');
 const db = require('../model/helper');
 
-async function getCatAmt() {
+//
+// GET and POST methods for invoices
+//
+
+/**
+ * GET number of invoices in table
+ **/
+
+router.get('/count', async function (req, res) {
   try {
-    // to get number of categories
-    let sql = `SELECT COUNT(categoryID) AS total FROM categories;`;
+    let sql = `SELECT COUNT(*) FROM invoices;`;
     let results = await db(sql);
-    return results.data[0].total;
-  } catch (error) {
+    // Convert DB results into "sensible" JSON
+    res.status(200).send({ count: results.data[0]['COUNT(*)'] });
+  } catch (err) {
     res.status(500).send({ error: err.message });
   }
-}
+});
 
-async function getLastInvoiceID() {
+/**
+ * GET one invoice with ID 'id'
+ **/
+
+router.get('/no/:id', async function (req, res) {
+  let { id } = req.params;
   try {
-    // to get number ID of last invoice added to DB
-    let sql = `SELECT MAX(invoiceID) AS lastID FROM invoices;`;
+    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    FROM users AS u 
+    LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+    LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+    INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+    WHERE i.invoiceID='${id}';`;
+
     let results = await db(sql);
-    return results.data[0].lastID;
-  } catch (error) {
+    // Convert DB results into "sensible" JSON
+    invoice = await joinLastInvoiceToJson(results); // joinToJson is async so needs to get called with await
+    res.status(200).send(invoice);
+  } catch (err) {
     res.status(500).send({ error: err.message });
   }
-}
+});
 
-// Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
-// !!! it's an async function, so whenever it gets called it needs to happen with an await
+/**
+ * GET one user
+ * Add all the invoices connected to this user
+ **/
+
+router.get('/user/:id', async function (req, res) {
+  let { id } = req.params;
+  try {
+    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    FROM users AS u 
+    LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+    LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+    INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+    WHERE u.userID='${id}';`;
+
+    let results = await db(sql);
+    // Convert DB results into "sensible" JSON
+    invoice = await joinToJson(results.data); // joinToJson is async so needs to get called with await
+    res.status(200).send(invoice);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+/**
+ * DELETE invoice with ID 'id'
+ **/
+
+router.delete('/:id', async (req, res) => {
+  let { id } = req.params;
+  let { userID } = req.body;
+
+  try {
+    let result = await db(`SELECT * FROM invoices WHERE invoiceID = ${id}`); // does invoice exist?
+    if (result.data.length === 0) {
+      res.status(404).send({ error: 'Invoice not found' });
+    } else {
+      await db(`DELETE FROM invoices WHERE invoiceID = ${id}`); // delete invoice
+
+      let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+      FROM users AS u 
+      LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+      LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+      INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+      WHERE u.userID=${userID}`;
+      let result = await db(sql);
+      // Convert DB results into "sensible" JSON
+      let invoices = await joinToJson(result.data); // joinToJson is async so needs to get called with await
+      res.status(201);
+      res.send(invoices);
+    }
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+/**
+ * POST a new invoice
+ * Return all invoices (updated) for user who added invoice
+ **/
+
+router.post('/new', async function (req, res) {
+  // The request's body is available in req.body
+  // If the query is successfull you should send back the full list of invoice properties
+
+  const { nameTo, emailTo, invoiceDate, invoiceItems, total, fk_userID } =
+    req.body;
+  const sql = `INSERT INTO invoices (nameTo, emailTo, invoiceDate, total, fk_userID) 
+                VALUES ('${nameTo}', '${emailTo}', '${invoiceDate}', ${total}, ${fk_userID});
+                SELECT LAST_INSERT_ID();`;
+
+  try {
+    let results = await db(sql);
+    // The results contain the new invoice's ID thanks to LAST_INSERT_ID()
+    let myInvoiceID = results.data[0].insertId;
+
+    // Add invoice items with invoice ID to invoice item table
+    if (myInvoiceID && invoiceItems.length) {
+      let vals = [];
+      for (let invoiceItem of invoiceItems) {
+        vals.push(
+          `(${myInvoiceID}, ${invoiceItem.catId}, ${invoiceItem.hours}, ${invoiceItem.rate}, ${invoiceItem.amount})`
+        );
+      }
+      let sql = `INSERT INTO invoice_items (fk_invoiceID, fk_categoriesID, hour, rate, amount) 
+          VALUES ${vals.join(', ')}`;
+      await db(sql);
+    }
+
+    let invoiceSql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    FROM users AS u 
+    LEFT JOIN invoices AS i ON u.userID = i.fk_userID
+    LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
+    INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+    WHERE u.userID=${fk_userID};`;
+
+    let result = await db(invoiceSql);
+    // Convert DB results into "sensible" JSON
+    let invoices = await joinToJson(result.data); // joinToJson is async so needs to get called with await
+    res.status(201);
+    res.send({ lastInvoiceID: myInvoiceID, invoices });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+//
+// Functions to format results from GETs to a useful format
+//
+
+/**
+ * Convert DB results into a useful JSON format: array of invoice objects with nested array of invoice items objs
+ * !!! it's an async function, so whenever it gets called it needs to happen with an await
+ **/
+
 async function joinToJson(results) {
   let catAmt = await getCatAmt();
   // send back length of categories table
@@ -73,6 +206,11 @@ async function joinToJson(results) {
   return resultInvoices;
 }
 
+/**
+ * Convert DB results into a useful JSON format: invoice obj with nested array of invoice items objs
+ * !!! it's an async function, so whenever it gets called it needs to happen with an await
+ **/
+
 async function joinLastInvoiceToJson(results) {
   // Get first row
   let row0 = results.data[0];
@@ -101,61 +239,28 @@ async function joinLastInvoiceToJson(results) {
   return invoice;
 }
 
-router.get('/', async function (req, res) {
-  // INNER JOIN statistic_data AS s ON i.invoiceID = s.statisticID
-  // Send back the full list of invoices joined with name from categories and data from invoice items
+//
+// Helper functions
+//
 
+/**
+ * GET amount of categories in DB
+ **/
+
+async function getCatAmt() {
   try {
-    let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
-  FROM invoices AS i
-  INNER JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
-  INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID ORDER BY i.invoiceID ASC;`;
-
+    // to get number of categories
+    let sql = `SELECT COUNT(categoryID) AS total FROM categories;`;
     let results = await db(sql);
-    // Convert DB results into "sensible" JSON
-    let invoices = await joinToJson(results.data); // joinToJson is async so needs to get called with await
-    res.status(200).send(invoices);
-  } catch (err) {
+    return results.data[0].total;
+  } catch (error) {
     res.status(500).send({ error: err.message });
   }
-});
+}
 
-router.get('/:id', async function (req, res) {
-  let { id } = req.params;
-  try {
-    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
-    FROM users AS u 
-    LEFT JOIN invoices AS i ON u.userID = i.fk_userID
-    LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
-    INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
-    WHERE u.userID='${id}';`;
-
-    let results = await db(sql);
-    // Convert DB results into "sensible" JSON
-    invoice = await joinLastInvoiceToJson(results); // joinToJson is async so needs to get called with await
-    res.status(200).send(invoice);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
-
-router.get('/last-invoice', async function (req, res) {
-  let lastInvoiceID = await getLastInvoiceID();
-  try {
-    let sql = `SELECT i.*, iIt.hour,  iIt.rate, iIt.amount, c.cat_name
-    FROM invoices AS i
-    LEFT OUTER JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
-    LEFT OUTER  JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
-    WHERE i.invoiceID = ${lastInvoiceID};`;
-
-    let results = await db(sql);
-    // Convert DB results into "sensible" JSON
-    invoice = await joinLastInvoiceToJson(results); // joinToJson is async so needs to get called with await
-    res.status(200).send(invoice);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
+//
+// Functions to calculate statistics
+//
 
 router.get('/specify/*', async function (req, res) {
   // The request's parameters are available in req.query
@@ -193,19 +298,6 @@ router.get('/specify/*', async function (req, res) {
   }
 });
 
-router.get('/total', async function (req, res) {
-  let id = Number(req.params.id);
-  try {
-    let sql = `SELECT SUM(amount) AS total FROM invoice_items;`;
-    let results = await db(sql);
-    let total = results.data[0].total.toString(); // cannot send number, that's why it needs to be converted to String
-    // Convert DB results into "sensible" JSON
-    res.status(200).send(total);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
-
 router.get('/total-hours', async function (req, res) {
   let id = Number(req.params.id);
   try {
@@ -233,19 +325,6 @@ router.get('/average/:catID', async function (req, res) {
   }
 });
 
-router.get('/:id/total', async function (req, res) {
-  let id = Number(req.params.id);
-  try {
-    let sql = `SELECT SUM (amount) total FROM invoice_items WHERE fk_invoiceID = ${id};`;
-    let results = await db(sql);
-    let total = results.data[0].total.toString();
-    // Convert DB results into "sensible" JSON
-    res.status(200).send(total);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
-
 router.get('/:id/stats', async function (req, res) {
   let id = Number(req.params.id);
   try {
@@ -259,41 +338,6 @@ router.get('/:id/stats', async function (req, res) {
     // Convert DB results into "sensible" JSON
     res.status(200).send(results);
   } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
-
-router.post('/new', async function (req, res) {
-  // The request's body is available in req.body
-  // If the query is successfull you should send back the full list of invoice properties
-
-  const { emailFrom, nameTo, emailTo, invoiceDate, invoiceItems, total, fk_userID } =
-    req.body;
-  const sql = `INSERT INTO invoices (nameTo, emailTo, invoiceDate, total, fk_userID) 
-                VALUES ('${emailFrom}', '${nameTo}', '${emailTo}', '${invoiceDate}', ${total}, ${fk_userID});
-                SELECT LAST_INSERT_ID();`;
-
-  try {
-    let results = await db(sql);
-    // The results contain the new invoice's ID thanks to LAST_INSERT_ID()
-    let invoiceID = results.data[0].insertId;
-
-    // Add invoice items with invoice ID to invoice item table
-    if (invoiceItems && invoiceItems.length) {
-      let vals = [];
-      for (let invoiceItem of invoiceItems) {
-        vals.push(
-          `(${invoiceID}, ${invoiceItem.CatId}, ${invoiceItem.hours}, ${invoiceItem.rate}, ${invoiceItem.amount})`
-        );
-      }
-      let sql = `INSERT INTO invoice_items (fk_invoiceID, fk_categoriesID, hour, rate, amount) 
-      VALUES ${vals.join(', ')}`;
-      await db(sql);
-    }
-    res.status(201);
-    const result = await db('SELECT * FROM invoices ORDER BY invoiceID ASC;');
-    res.send(result);
-  } catch (error) {
     res.status(500).send({ error: err.message });
   }
 });
