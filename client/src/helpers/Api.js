@@ -86,6 +86,14 @@ class Api {
     return await this._doFetch('/statistics/new', 'POST', data);
   }
 
+   /**
+   * Get average for all fiels per category
+   **/
+
+    static async getAverageCategory(catID) {
+      return await this._doFetch(`/invoices/average/${catID}`);
+    }
+
   /**
    * General purpose GET (for URLs like /members-only)
    **/

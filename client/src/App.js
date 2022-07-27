@@ -78,7 +78,6 @@ function App() {
   }
 
   async function updateUser(userData) {
-    console.log("myd", userData)
     let response = await Api.updateUser(user.id, userData); // do POST
     try {
       if (response.ok) {
@@ -257,7 +256,7 @@ function App() {
           path="general-statistics"
           element={
             <GeneralStatisticsView
-              invoicesFromApp={invoices}
+            countInvoices={countInvoices}
               billCatsFromApp={billCats}
             />
           }

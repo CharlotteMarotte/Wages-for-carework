@@ -4,7 +4,7 @@ const EMPTY_FORM = {
   amt_HouseholdMem: 1,
   amt_children0_6: 0,
   amt_children7_18: 0,
-  otherCaringResp: 0,
+  amt_otherCaringResp: 0,
   amt_flatmates: 0,
   amt_partners: 0,
   partner_sexualOrient: 'None',
@@ -131,8 +131,8 @@ export default function EnterDataView(props) {
           <input
             required
             className="form-control"
-            name={'otherCaringResp'}
-            value={statData.otherCaringResp}
+            name={'amt_otherCaringResp'}
+            value={statData.amt_otherCaringResp}
             type="number"
             min="0"
             onChange={handleIntInputChange}

@@ -25,13 +25,13 @@ router.post('/new', async function (req, res) {
     amt_children7_18,
     amt_flatmates,
     amt_partners,
-    otherCaringResp,
+    amt_otherCaringResp,
     partner_sexualOrient,
     partner_relStyle,
     employment_status,
     domesticHelp,
   } = req.body;
-  const sql = `INSERT INTO statistic_data (amt_HouseholdMem, amt_children0_6, amt_children7_18, amt_flatmates, amt_partners, otherCaringResp, partner_sexualOrient, partner_relStyle, employment_status, domesticHelp) VALUES (${amt_HouseholdMem}, ${amt_children0_6}, ${amt_children7_18}, ${amt_flatmates}, ${amt_partners}, ${otherCaringResp}, '${partner_sexualOrient}', '${partner_relStyle}', '${employment_status}', ${domesticHelp});`;
+  const sql = `INSERT INTO statistic_data (amt_HouseholdMem, amt_children0_6, amt_children7_18, amt_flatmates, amt_partners, amt_otherCaringResp, partner_sexualOrient, partner_relStyle, employment_status, domesticHelp) VALUES (${amt_HouseholdMem}, ${amt_children0_6}, ${amt_children7_18}, ${amt_flatmates}, ${amt_partners}, ${amt_otherCaringResp}, '${partner_sexualOrient}', '${partner_relStyle}', '${employment_status}', ${domesticHelp});`;
   try {
     let results = await db(sql);
     // The results contain the new invoice's ID thanks to LAST_INSERT_ID()

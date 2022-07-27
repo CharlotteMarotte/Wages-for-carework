@@ -68,7 +68,7 @@ async function joinToJson(results) {
       amt_children0_6: row0.amt_children0_6,
       amt_children0_6: row0.amt_children0_6,
       amt_partners: row0.amt_partners,
-      otherCaringResp: row0.otherCaringResp,
+      amt_otherCaringResp: row0.amt_otherCaringResp,
       partner_sexualOrient: row0.partner_sexualOrient,
       partner_relStyle: row0.partner_relStyle,
       employment_status: row0.employment_status,
