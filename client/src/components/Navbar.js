@@ -46,34 +46,12 @@ function Navbar(props) {
                   About
                 </NavLink>
               </li>
-
-              {/* Navbar with options for statistics */}
-              <li className="nav-item dropdown px-3">
-                <a
-                  className="nav-link dropdown-toggle"
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+              <li className="nav-item px-3">
+                <NavLink className="nav-link active" to="/filter-statistics">
                   Statistics
-                </a>
-                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li>
-                    <NavLink className="dropdown-item" to="/general-statistics">
-                      General
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      className="dropdown-item"
-                      to="/specific-statistics"
-                    >
-                      Specify
-                    </NavLink>
-                  </li>
-                </ul>
+                </NavLink>
               </li>
+
               {props.user ? (
                 <ul className="navbar-nav">
                   <li className="nav-item px-3">
@@ -88,7 +66,7 @@ function Navbar(props) {
                           : '/enter-data'
                       }
                     >
-                      Create Invoice
+                      Create 
                     </NavLink>
                   </li>
                   <li className="nav-item">

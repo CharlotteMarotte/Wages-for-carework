@@ -8,7 +8,7 @@ import CreateInvoiceView from './views/CreateInvoiceView';
 import InvoiceDocView from './views/InvoiceDocView';
 import Error404View from './views/Error404View';
 import GeneralStatisticsView from './views/GeneralStatisticsView';
-import SpecificStatisticsView from './views/SpecificStatisticsView';
+import FilterStatisticsView from './views/FilterStatisticsView';
 import EnterDataView from './views/EnterDataView';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -19,6 +19,7 @@ import LoginView from './views/LoginView';
 import ProfileView from './views/ProfileView';
 import SignUpView from './views/SignUpView';
 import EditProfileView from './views/EditProfileView';
+import SpecificStatisticsView from './views/SpecificStatisticsView';
 
 function App() {
   //
@@ -32,6 +33,8 @@ function App() {
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
   const [registerErrorMsg, setRegisterErrorMsg] = useState('');
   const [countInvoices, setCountInvoices] = useState(0);
+  const [filteredStatistics, setFilteredStatistics] = useState([]);
+  const [averagesAll, setsAveragesAll] = useState([]); // holds average hours, rate, amount for all invoice items
 
   // gets all categories and all invoices that exist at the moment of rendering of the App
   useEffect(() => {
@@ -75,6 +78,20 @@ function App() {
   function doLogout() {
     Local.removeUserInfo();
     setUser(null);
+  }
+
+  async function getUnfilteredAverages() {
+    try {
+      let response = await Api.getContent('/invoices/averages');
+      if (response.ok) {
+        let averages = response.data;
+        setsAveragesAll(averages);
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
   }
 
   async function updateUser(userData) {
@@ -155,6 +172,23 @@ function App() {
     }
   }
 
+  async function getFilteredStatistics(querystring) {
+    try {
+      // URL should look something like this
+      // /invoices/specify/?partner_sexualOrient=heterosexual&partner_sexualOrient=queer
+      let response = await Api.getFilteredAverages(querystring);
+      if (response.ok) {
+        let data = response.data;
+        setFilteredStatistics(data);
+        navigate('/specific-statistics');
+      } else {
+        console.log(`Server error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Server error: ${err.message}`);
+    }
+  }
+
   async function getBillCats() {
     let response = await Api.getContent('/bill-cats');
     try {
@@ -221,7 +255,7 @@ function App() {
           path="/edit-profile"
           element={
             <PrivateRoute>
-              <EditProfileView user={user} updateUserCb={updateUser}/>
+              <EditProfileView user={user} updateUserCb={updateUser} />
             </PrivateRoute>
           }
         />
@@ -256,19 +290,27 @@ function App() {
           path="general-statistics"
           element={
             <GeneralStatisticsView
-            countInvoices={countInvoices}
+              getUnfilteredAveragesCb={getUnfilteredAverages}
+              countInvoices={countInvoices}
+              billCatsFromApp={billCats}
+              averagesAll={averagesAll}
+            />
+          }
+        />
+        <Route
+          path="filter-statistics"
+          element={
+            <FilterStatisticsView
+              averagesAll={filteredStatistics}
+              getFilteredStatisticsCb={getFilteredStatistics}
+              invoicesFromApp={invoices}
               billCatsFromApp={billCats}
             />
           }
         />
         <Route
           path="specific-statistics"
-          element={
-            <SpecificStatisticsView
-              invoicesFromApp={invoices}
-              billCatsFromApp={billCats}
-            />
-          }
+          element={<SpecificStatisticsView averagesAll={filteredStatistics} />}
         />
         <Route path="*" element={<Error404View />} />
         <Route path="*" element={<Error404View />} />

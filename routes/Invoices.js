@@ -287,27 +287,19 @@ async function getCatAmt() {
 
 router.get('/averages', async function (req, res) {
   try {
-    let sql = `SELECT c.cat_name AS catName, AVG(hour) AS avgHour, AVG(rate) AS avgRate, AVG(amount) AS avgAmount
+    let sqlAverages = `SELECT c.cat_name AS catName, AVG(hour) AS avgHour, AVG(rate) AS avgRate, AVG(amount) AS avgAmount
       FROM invoice_items AS iIt INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID GROUP BY c.categoryID;`;
-    let results = await db(sql);
-    let averages = await averagesJoinToJson(results.data);
-    res.status(200).send(averages);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
+    let resultsAverages = await db(sqlAverages);
+    let averages = await averagesJoinToJson(resultsAverages.data);
 
-/**
- * GET sum of hours of all invoices
- **/
+    let sqlHours = `SELECT SUM(hour) AS total FROM invoice_items;`;
+    let resultsHours = await db(sqlHours);
+    let totalHours = resultsHours.data[0].total.toString();
 
-router.get('/total-hours', async function (req, res) {
-  try {
-    let sql = `SELECT SUM(hour) AS total FROM invoice_items;`;
-    let results = await db(sql);
-    let total = results.data[0].total.toString();
-    // Convert DB results into "sensible" JSON
-    res.status(200).send(total);
+    let sqlTotals = `SELECT SUM(total) AS total FROM invoices;`;
+    let resultsTotals = await db(sqlTotals);
+    let totalTotals = resultsTotals.data[0].total.toString();
+    res.status(200).send({ averages, totalHours, totalTotals });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -320,7 +312,6 @@ router.get('/total-hours', async function (req, res) {
 router.get('/specify/*', async function (req, res) {
   // The request's parameters are available in req.query
   const reqQuery = req.query;
-  console.log("req", reqQuery)
 
   let queryArray = []; // array is build in for loop with all the conditions
 

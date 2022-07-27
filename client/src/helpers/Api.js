@@ -90,8 +90,8 @@ class Api {
    * Get average for all fiels per category
    **/
 
-    static async getAverageCategory(catID) {
-      return await this._doFetch(`/invoices/average/${catID}`);
+    static async getFilteredAverages(querystring) {
+      return await this._doFetch(`/invoices/specify/?${querystring}`);
     }
 
   /**

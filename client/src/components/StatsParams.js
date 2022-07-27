@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 export default function StatsParams(props) {
   if (!props.statParams) {
@@ -21,7 +21,7 @@ export default function StatsParams(props) {
   return (
     <form onSubmit={props.handleSubmitCb}>
       <div
-        className="accordion accordion-flush"
+        className="accordion"
         id="accordionPanelsStayOpenExample"
       >
         <div className="accordion-item">
@@ -34,7 +34,7 @@ export default function StatsParams(props) {
               aria-expanded="false"
               aria-controls="collapseParent"
             >
-              Parameters Demographic Data{' '}
+              Specify parameters you're interested in{' '}
             </button>
           </h2>
           <div
@@ -702,16 +702,10 @@ export default function StatsParams(props) {
         </div>
       </div>
       <button
-        className="btn btn-outline-dark m-2 btn-block btn-signup text-uppercase"
+        className="btn btn-outline-dark m-2 btn-block btn-signup text-uppercase offset-4 mb-5"
         type="submit"
       >
         Filter
-      </button>
-      <button
-        className="btn btn-outline-dark m-2 btn-block btn-signup text-uppercase"
-        type="submit"
-      >
-        Reset
       </button>
     </form>
   );
