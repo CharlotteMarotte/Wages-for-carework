@@ -12,11 +12,6 @@ export default function EditProfileView(props) {
   };
 
   const [profileData, setProfileData] = useState(DEFAULT_FORM);
-  const [image, setImage] = useState(null);
-
-  function handleFileChange(event) {
-    setImage(event.target.files[0]);
-}
 
   const handleInputChange = (event) => {
     let { name, value } = event.target;
@@ -33,7 +28,6 @@ export default function EditProfileView(props) {
     if (profileData.password.length > 0) {
       delete profileData.password; // only send password if it has changed
     }
-    profileData.append('clientimage', image, image.name);
     props.updateUserCb(profileData);
     setProfileData(DEFAULT_FORM);
   }
@@ -44,10 +38,6 @@ export default function EditProfileView(props) {
       onSubmit={handleSubmit}
     >
       <div className="g-2 row">
-        <label>
-          File
-          <input type="file" onChange={handleFileChange} required />
-        </label>
         <label className="form-label col-md-6">
           First name
           <input
@@ -99,7 +89,7 @@ export default function EditProfileView(props) {
             type="password"
             className="form-control myinput"
             name="password"
-            autocomplete="on"
+            autoComplete="on"
             value={profileData.password}
           />
         </label>

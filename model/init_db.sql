@@ -11,6 +11,8 @@ DROP TABLE IF EXISTS statistic_data;
 
 DROP TABLE IF EXISTS users;
 
+DROP TABLE IF EXISTS images;
+
 SET
     foreign_key_checks = 1;
 
@@ -52,7 +54,7 @@ CREATE TABLE users (
     password VARCHAR(200) NOT NULL,
     PRIMARY KEY (userID),
     FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(statisticID) ON DELETE CASCADE,
-    FOREIGN KEY (fk_imageID) REFERENCES images(imageID) ON DELETE CASCADE
+    FOREIGN KEY (fk_imageID) REFERENCES images(imageID) ON DELETE SET NULL
 );
 
 CREATE TABLE invoices (

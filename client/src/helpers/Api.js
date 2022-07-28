@@ -46,13 +46,13 @@ class Api {
     return await this._doFetch(`/users/${userID}`);
   }
 
-   /**
+  /**
    * Update data for user with ID 'userId'
    **/
 
-    static async updateUser(userID, body) {
-      return await this._doFetch(`/users/${userID}`, 'PUT', body);
-    }
+  static async updateUser(userID, body) {
+    return await this._doFetch(`/users/${userID}`, 'PUT', body);
+  }
 
   /**
    * Add a new invoice with data from user input form
@@ -86,13 +86,13 @@ class Api {
     return await this._doFetch('/statistics/new', 'POST', data);
   }
 
-   /**
+  /**
    * Get average for all fiels per category
    **/
 
-    static async getFilteredAverages(querystring) {
-      return await this._doFetch(`/invoices/specify/?${querystring}`);
-    }
+  static async getFilteredAverages(querystring) {
+    return await this._doFetch(`/invoices/specify/?${querystring}`);
+  }
 
   /**
    * General purpose GET (for URLs like /members-only)

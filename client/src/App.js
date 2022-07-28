@@ -20,6 +20,8 @@ import ProfileView from './views/ProfileView';
 import SignUpView from './views/SignUpView';
 import EditProfileView from './views/EditProfileView';
 import SpecificStatisticsView from './views/SpecificStatisticsView';
+import UploadPhotoView from './views/UploadPhotoView';
+import CreatePDF from './views/CreatePDF';
 
 function App() {
   //
@@ -45,28 +47,6 @@ function App() {
   //
   // Declare funcs used in this component
   //
-
-
-  async function uploadFile(formData) {
-    let options = {
-        method: 'POST',
-        body: formData
-    };
-
-    try {
-        let response = await fetch('/invoices/images', options);
-        if (response.ok) {
-            // Server responds with updated array of files
-            let data = await response.json();
-        } else {
-            console.log(`Server error: ${response.status}: ${response.statusText}`);
-        }
-    } catch (err) {
-        console.log(`Network error: ${err.message}`);
-    }
-}
-
-
 
   // POST method to add recipe to my sql database ("favorites" sql table) after click on Add to Favorites in the RecipeDetailView
   async function addUser(userData) {
@@ -113,6 +93,30 @@ function App() {
       }
     } catch (err) {
       console.log(`Server error: ${err.message}`);
+    }
+  }
+
+  async function uploadFile(imageData) {
+    let options = {
+      method: 'POST',
+      body: imageData,
+    };
+
+    try {
+      let response = await fetch('/images', options);
+      if (response.ok) {
+        // Server responds with updated array of files
+        let data = await response.json();
+        setUser((state) => ({
+          ...state, // gets replaced by all key-value pairs from obj
+          image: data.filename,
+        }));
+        navigate('/profile');
+      } else {
+        console.log(`Server error: ${response.status}: ${response.statusText}`);
+      }
+    } catch (err) {
+      console.log(`Network error: ${err.message}`);
     }
   }
 
@@ -277,7 +281,15 @@ function App() {
           path="/edit-profile"
           element={
             <PrivateRoute>
-              <EditProfileView user={user} updateUserCb={updateUser} uploadFileCb={uploadFile}/>
+              <EditProfileView user={user} updateUserCb={updateUser} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-photo"
+          element={
+            <PrivateRoute>
+              <UploadPhotoView uploadFileCb={uploadFile} user={user} />
             </PrivateRoute>
           }
         />
@@ -319,6 +331,7 @@ function App() {
             />
           }
         />
+        <Route path="create-pdf" element={<CreatePDF />} />
         <Route
           path="filter-statistics"
           element={

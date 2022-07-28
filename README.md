@@ -24,6 +24,8 @@
 
 - Make sure you understand how the tables are constructed. In your MySQL console, you can run `use patriarchy;` and then `describe [table];` to see the structure of the table.
 
+- Create a `clientimages` folder in the server's `public` folder. This is where the profile pictures will be stored.
+
 ### Development
 
 - Run `yarn start` in project directory to start the Express server on port 5000
