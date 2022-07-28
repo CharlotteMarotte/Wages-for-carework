@@ -46,6 +46,28 @@ function App() {
   // Declare funcs used in this component
   //
 
+
+  async function uploadFile(formData) {
+    let options = {
+        method: 'POST',
+        body: formData
+    };
+
+    try {
+        let response = await fetch('/invoices/images', options);
+        if (response.ok) {
+            // Server responds with updated array of files
+            let data = await response.json();
+        } else {
+            console.log(`Server error: ${response.status}: ${response.statusText}`);
+        }
+    } catch (err) {
+        console.log(`Network error: ${err.message}`);
+    }
+}
+
+
+
   // POST method to add recipe to my sql database ("favorites" sql table) after click on Add to Favorites in the RecipeDetailView
   async function addUser(userData) {
     let myresponse = await Api.addUser(userData); // do POST
@@ -255,7 +277,7 @@ function App() {
           path="/edit-profile"
           element={
             <PrivateRoute>
-              <EditProfileView user={user} updateUserCb={updateUser} />
+              <EditProfileView user={user} updateUserCb={updateUser} uploadFileCb={uploadFile}/>
             </PrivateRoute>
           }
         />
