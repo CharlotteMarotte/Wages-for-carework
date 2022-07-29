@@ -312,13 +312,7 @@ function App() {
         />
         <Route
           path="invoices/:id"
-          element={
-            <InvoiceDocView
-              billCatFromApp={billCats}
-              // ix={invoices.length - 1} // not ideal way to show last invoice, assumes invoices can never be deleted
-              // getInvoicesCb={getInvoices}
-            />
-          }
+          element={<InvoiceDocView billCatFromApp={billCats} />}
         />
         <Route
           path="general-statistics"
@@ -331,7 +325,10 @@ function App() {
             />
           }
         />
-        <Route path="create-pdf" element={<CreatePDF />} />
+        <Route
+          path="create-pdf/:id"
+          element={<CreatePDF billCatFromApp={billCats} />}
+        />
         <Route
           path="filter-statistics"
           element={

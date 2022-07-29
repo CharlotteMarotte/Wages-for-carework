@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS statistic_data;
 
 DROP TABLE IF EXISTS users;
 
-DROP TABLE IF EXISTS images;
 
 SET
     foreign_key_checks = 1;
@@ -37,25 +36,18 @@ CREATE TABLE statistic_data (
     PRIMARY KEY (statisticID)
 );
 
-CREATE TABLE images (
-    imageID INT NOT NULL AUTO_INCREMENT,
-    filename VARCHAR(100) NOT NULL,
-    PRIMARY KEY (imageID)
-);
+
 
 CREATE TABLE users (
     userID INT NOT NULL AUTO_INCREMENT,
     fk_statisticsID INT,
-    fk_imageID INT,
     username VARCHAR(30) NOT NULL UNIQUE,
     firstname varchar(255) NOT NULL,
     lastname varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     password VARCHAR(200) NOT NULL,
     PRIMARY KEY (userID),
-    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(statisticID) ON DELETE CASCADE,
-    FOREIGN KEY (fk_imageID) REFERENCES images(imageID) ON DELETE SET NULL
-);
+    FOREIGN KEY (fk_statisticsID) REFERENCES statistic_data(statisticID) ON DELETE CASCADE);
 
 CREATE TABLE invoices (
     invoiceID INT NOT NULL AUTO_INCREMENT,

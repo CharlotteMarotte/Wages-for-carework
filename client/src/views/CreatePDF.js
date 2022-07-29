@@ -6,6 +6,10 @@ import {
   StyleSheet,
   PDFViewer,
 } from '@react-pdf/renderer';
+
+import './InvoiceDocView.css';
+import InvoiceDoc from '../components/InvoiceDoc';
+
 // Create styles
 const styles = StyleSheet.create({
   page: {
@@ -23,7 +27,11 @@ const styles = StyleSheet.create({
 });
 
 // Create Document Component
-function CreatePDF() {
+function CreatePDF(props) {
+
+  let { id } = useParams();
+
+
   return (
     <PDFViewer style={styles.viewer}>
       {/* Start of the document*/}
@@ -31,10 +39,7 @@ function CreatePDF() {
         {/*render a single page*/}
         <Page size="A4" style={styles.page}>
           <View style={styles.section}>
-            <Text>Hello</Text>
-          </View>
-          <View style={styles.section}>
-            <Text>World</Text>
+      <InvoiceDoc billCatFromApp={props.billCatFromApp} />
           </View>
         </Page>
       </Document>

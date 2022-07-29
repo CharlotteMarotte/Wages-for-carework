@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 function ProfileView(props) {
   const [errorMsg, setErrorMsg] = useState('');
-  let photoUrl = 'http://localhost:5000/clientimages';
 
   if (!props.user || !props.user.invoices) {
     return <h2>Loading...</h2>;
@@ -24,31 +23,11 @@ function ProfileView(props) {
                     borderBottomLeftRadius: '.5rem',
                   }}
                 >
-                  <img
-                    src={
-                      props.user.image
-                        ? `${photoUrl}/${props.user.image}`
-                        : 'https://www.medicalcost.com/wp-content/uploads/2012/04/HiRes_WOMAN.png'
-                    }
-                    alt="Avatar"
-                    className="img-fluid my-3 mx-auto"
-                    style={{ width: '120px' }}
-                  />
-
                   <h5 className="text-dark mx-auto">
                     {props.user.firstname + ' ' + props.user.lastname}
                   </h5>
+                </div>
 
-                  <div className="mx-auto">
-                  <Link
-                    to={`/edit-photo`}
-                    className="btn-sm btn btn-outline-dark btn-signup text-uppercase"
-                  >
-                    Upload Picture
-                  </Link>
-                </div>
-                </div>
-               
                 <div className="col-md-8">
                   <div className="card-body p-4">
                     <h6>Information</h6>
