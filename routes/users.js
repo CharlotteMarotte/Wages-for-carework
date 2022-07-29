@@ -12,13 +12,9 @@ const { BCRYPT_WORK_FACTOR } = require('../config');
 router.put('/:userID', async (req, res) => {
   // The request's body is available in req.body
   let { userID } = req.params;
-  let { firstname, lastname, email, username, password } = req.body;
+  let { firstname, lastname, email, username, currentpassword, newpassword} = req.body;
 
-  let hashedPassword = '';
 
-  if (password) {
-    hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-  }
 
   try {
     let result = await db(`SELECT * FROM users WHERE userID = ${userID}`);
@@ -26,18 +22,32 @@ router.put('/:userID', async (req, res) => {
       res.status(404).send({ error: 'User not found' });
       return;
     } else {
-      hashedPassword = hashedPassword.length
-        ? result.data.password
-        : hashedPassword;
+
+      let user = result.data[0]; // the user's row/record from the DB
+
+      let passwordsEqual = await bcrypt.compare(currentpassword, user.password);
+
+      if (passwordsEqual) {
+        let hashedPassword = await bcrypt.hash(
+          newpassword,
+          BCRYPT_WORK_FACTOR
+        );
+
+        let sql = `
+            UPDATE users SET password ='${hashedPassword}' WHERE userID = ${userID}`;
+        await db(sql);
+      }else{
+        res.status(401).send({ error: 'Incorrect current password' });
+      }
 
       let sql = `
         UPDATE users 
-        SET firstname = '${firstname}', lastname = '${lastname}', email = '${email}', username='${username}', password = '${hashedPassword}'
+        SET firstname = '${firstname}', lastname = '${lastname}', email = '${email}', username='${username}'
         WHERE userID = ${userID}`;
       await db(sql); // update user
 
       let response = await db(`SELECT * FROM users WHERE userID = ${userID}`);
-      let user = response.data[0];
+      user = response.data[0];
       delete user.password;
       res.send(user); // return updated user
     }

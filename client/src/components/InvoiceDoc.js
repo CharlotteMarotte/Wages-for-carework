@@ -34,7 +34,7 @@ export default function InvoiceDoc(props) {
   }
 
   // sometimes a weird bug was occuring where either currInvoice or billCatFromApp was empty, so I tried to catch this error
-  if (!currInvoice || !props.billCatFromApp.length) {
+  if (!currInvoice ) {
     return (
       <figure className="figure">
         <img
@@ -98,7 +98,6 @@ export default function InvoiceDoc(props) {
             // arrow function, so it doesn't get called immediately but only after a click
             <InvoiceDocItem
               key={index}
-              billCatFromApp={props.billCatFromApp}
               invoiceFromDoc={it}
             />
           )

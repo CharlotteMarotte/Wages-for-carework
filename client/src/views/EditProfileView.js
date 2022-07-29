@@ -8,7 +8,8 @@ export default function EditProfileView(props) {
     firstname: props.user.firstname,
     lastname: props.user.lastname,
     email: props.user.email,
-    password: '',
+    currentpassword: '',
+    newpassword: '',
   };
 
   const [profileData, setProfileData] = useState(DEFAULT_FORM);
@@ -25,9 +26,6 @@ export default function EditProfileView(props) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    if (profileData.password.length > 0) {
-      delete profileData.password; // only send password if it has changed
-    }
     props.updateUserCb(profileData);
     setProfileData(DEFAULT_FORM);
   }
@@ -37,6 +35,12 @@ export default function EditProfileView(props) {
       className="container overflow-hidden row col-6 offset-3"
       onSubmit={handleSubmit}
     >
+      {props.updateUserErrorMsg && (
+        <div className="alert alert-warning text-center">
+          {props.updateUserErrorMsg}
+        </div>
+      )}
+
       <div className="g-2 row">
         <label className="form-label col-md-6">
           First name
@@ -72,7 +76,7 @@ export default function EditProfileView(props) {
         </label>
       </div>
       <div className="g-2 row">
-        <label className="form-label col-md-6">
+        <label className="form-label col-md-12">
           Username
           <input
             onChange={handleInputChange}
@@ -83,14 +87,25 @@ export default function EditProfileView(props) {
           />
         </label>
         <label className="form-label col-md-6">
-          Password
+          Current Password
           <input
             onChange={handleInputChange}
             type="password"
             className="form-control myinput"
-            name="password"
+            name="currentpassword"
             autoComplete="on"
-            value={profileData.password}
+            value={profileData.currentpassword}
+          />
+        </label>
+        <label className="form-label col-md-6">
+          New Password
+          <input
+            onChange={handleInputChange}
+            type="password"
+            className="form-control myinput"
+            name="newpassword"
+            autoComplete="on"
+            value={profileData.newpassword}
           />
         </label>
       </div>

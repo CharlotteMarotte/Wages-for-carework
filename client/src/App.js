@@ -20,7 +20,6 @@ import ProfileView from './views/ProfileView';
 import SignUpView from './views/SignUpView';
 import EditProfileView from './views/EditProfileView';
 import SpecificStatisticsView from './views/SpecificStatisticsView';
-import UploadPhotoView from './views/UploadPhotoView';
 import CreatePDF from './views/CreatePDF';
 
 function App() {
@@ -34,6 +33,7 @@ function App() {
   const [user, setUser] = useState(Local.getUser());
   const [loginErrorMsg, setLoginErrorMsg] = useState('');
   const [registerErrorMsg, setRegisterErrorMsg] = useState('');
+  const [updateUserErrorMsg, setUpdateUserErrorMsg] = useState('');
   const [countInvoices, setCountInvoices] = useState(0);
   const [filteredStatistics, setFilteredStatistics] = useState([]);
   const [averagesAll, setsAveragesAll] = useState([]); // holds average hours, rate, amount for all invoice items
@@ -96,34 +96,17 @@ function App() {
     }
   }
 
-  async function uploadFile(imageData) {
-    let options = {
-      method: 'POST',
-      body: imageData,
-    };
 
-    try {
-      let response = await fetch('/images', options);
-      if (response.ok) {
-        // Server responds with updated array of files
-        let data = await response.json();
-        setUser((state) => ({
-          ...state, // gets replaced by all key-value pairs from obj
-          image: data.filename,
-        }));
-        navigate('/profile');
-      } else {
-        console.log(`Server error: ${response.status}: ${response.statusText}`);
-      }
-    } catch (err) {
-      console.log(`Network error: ${err.message}`);
-    }
-  }
 
   async function updateUser(userData) {
     let response = await Api.updateUser(user.id, userData); // do POST
     try {
-      if (response.ok) {
+      if (response.status === 401) {
+         console.log(response)
+        setUpdateUserErrorMsg('The old password you have entered is incorrect');
+      } 
+      else if(response.ok) {
+        setUpdateUserErrorMsg('');
         let { firstname, lastname, email, username } = response.data;
 
         setUser((state) => ({
@@ -281,18 +264,11 @@ function App() {
           path="/edit-profile"
           element={
             <PrivateRoute>
-              <EditProfileView user={user} updateUserCb={updateUser} />
+              <EditProfileView user={user} updateUserCb={updateUser} updateUserErrorMsg={updateUserErrorMsg}/>
             </PrivateRoute>
           }
         />
-        <Route
-          path="/edit-photo"
-          element={
-            <PrivateRoute>
-              <UploadPhotoView uploadFileCb={uploadFile} user={user} />
-            </PrivateRoute>
-          }
-        />
+     
         <Route
           path="enter-data"
           element={
@@ -327,7 +303,7 @@ function App() {
         />
         <Route
           path="create-pdf/:id"
-          element={<CreatePDF billCatFromApp={billCats} />}
+          element={<CreatePDF/>}
         />
         <Route
           path="filter-statistics"

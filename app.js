@@ -9,7 +9,6 @@ var InvoiceRouter = require('./routes/invoices');
 var StatisticRouter = require('./routes/statistics');
 var UsersRouter = require('./routes/users');
 var AuthRouter = require('./routes/auth');
-var ImagesRouter = require('./routes/images');
 
 
 
@@ -27,7 +26,6 @@ app.use('/invoices', InvoiceRouter);
 app.use('/statistics', StatisticRouter);
 app.use('/users', UsersRouter);
 app.use('/auth', AuthRouter);
-app.use('/images', ImagesRouter);
 
 
 

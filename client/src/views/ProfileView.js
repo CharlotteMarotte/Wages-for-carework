@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function ProfileView(props) {
   const [errorMsg, setErrorMsg] = useState('');
 
-  if (!props.user || !props.user.invoices) {
+  if (!props.user) {
     return <h2>Loading...</h2>;
   }
 
@@ -59,32 +59,46 @@ function ProfileView(props) {
                     <h6>Invoices</h6>
                     <hr className="mt-0 mb-4" />
                     <div className="row col-10 offset-1">
-                      {props.user.invoices.map((i) => (
-                        <div
-                          className="card me-auto col-12 p-3 m-1 justify-content-center"
-                          key={i.id}
-                        >
-                          <div className="b-3">
-                            <p>TO: {i.nameTo}</p>
-                            <p className="text-muted">
-                              DATE: {i.invoiceDate.slice(0, 10)}
-                            </p>
+                      {props.user.invoices ? (
+                        props.user.invoices.map((i) => (
+                          <div
+                            className="card me-auto col-12 p-3 m-1 justify-content-center"
+                            key={i.id}
+                          >
+                            <div className="b-3">
+                              <p>TO: {i.nameTo}</p>
+                              <p className="text-muted">
+                                DATE: {i.invoiceDate.slice(0, 10)}
+                              </p>
 
-                            <button
-                              className="btn btn-outline-secondary btn-signup text-uppercase me-2"
-                              onClick={(e) => props.deleteInvoiceCb(i.id)}
-                            >
-                              Delete
-                            </button>
-                            <Link
-                              to={`/invoices/${i.id}`}
-                              className="btn btn-outline-dark btn-signup text-uppercase me-2"
-                            >
-                              View
-                            </Link>
+                              <button
+                                className="btn btn-outline-secondary btn-signup text-uppercase me-2"
+                                onClick={(e) => props.deleteInvoiceCb(i.id)}
+                              >
+                                Delete
+                              </button>
+                              <Link
+                                to={`/invoices/${i.id}`}
+                                className="btn btn-outline-dark btn-signup text-uppercase me-2"
+                              >
+                                View
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))
+                      ) : (
+                        <Link
+                          to={
+                            props.user.demographicData &&
+                            Object.keys(props.user.demographicData).length !== 0
+                              ? '/create'
+                              : '/enter-data'
+                          }
+                          className="btn btn-outline-dark btn-signup text-uppercase me-2"
+                        >
+                          Create invoice
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

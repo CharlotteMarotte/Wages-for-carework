@@ -29,7 +29,7 @@ router.get('/count', async function (req, res) {
 router.get('/no/:id', async function (req, res) {
   let { id } = req.params;
   try {
-    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIt.amount, c.cat_name
     FROM users AS u 
     LEFT JOIN invoices AS i ON u.userID = i.fk_userID
     LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
@@ -53,7 +53,7 @@ router.get('/no/:id', async function (req, res) {
 router.get('/user/:id', async function (req, res) {
   let { id } = req.params;
   try {
-    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    let sql = `SELECT u.*, i.*, iIt.hour, iIt.rate, iIt.amount, c.cat_name
     FROM users AS u 
     LEFT JOIN invoices AS i ON u.userID = i.fk_userID
     LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
@@ -84,7 +84,7 @@ router.delete('/:id', async (req, res) => {
     } else {
       await db(`DELETE FROM invoices WHERE invoiceID = ${id}`); // delete invoice
 
-      let sql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+      let sql = `SELECT i.*, iIt.hour, iIt.rate, iIt.amount, c.cat_name
       FROM users AS u 
       LEFT JOIN invoices AS i ON u.userID = i.fk_userID
       LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
@@ -134,7 +134,7 @@ router.post('/new', async function (req, res) {
       await db(sql);
     }
 
-    let invoiceSql = `SELECT i.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+    let invoiceSql = `SELECT i.*, iIt.hour, iIt.rate, iIt.amount, c.cat_name
     FROM users AS u 
     LEFT JOIN invoices AS i ON u.userID = i.fk_userID
     LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID

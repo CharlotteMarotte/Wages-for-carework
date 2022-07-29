@@ -31,7 +31,7 @@ class Local {
         }
 
         let user = JSON.parse(userjson);
-        return user.id;
+        return user.userID;
     }
 
     static getUsername() {

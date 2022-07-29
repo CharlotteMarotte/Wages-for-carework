@@ -60,7 +60,7 @@ function Navbar(props) {
                       aria-current="page"
                       // if user is logged in and has already entered their demographic data go directly to CreateInvoiceView
                       to={
-                        props.user &&
+                        props.user && props.user.demographicData &&
                         Object.keys(props.user.demographicData).length !== 0
                           ? '/create'
                           : '/enter-data'

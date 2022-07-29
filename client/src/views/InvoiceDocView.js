@@ -23,7 +23,7 @@ export default function InvoiceDocView(props) {
 
   return (
     <div>
-      <InvoiceDoc billCatFromApp={props.billCatFromApp} />
+      <InvoiceDoc />
     </div>
   );
 }

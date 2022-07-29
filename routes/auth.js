@@ -88,7 +88,6 @@ async function joinToJson(results) {
 router.post('/register', async (req, res) => {
   let { username, password, firstname, lastname, email } = req.body;
   let hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-
   try {
     let test = await db(`SELECT * FROM users WHERE username='${username}'`);
     if (test.data.length !== 0) {
@@ -115,12 +114,12 @@ router.post('/login', async (req, res) => {
 
   try {
     let results = await db(
-      `SELECT u.*, i.*, s.*, iIt.hour, iIt.rate, iIT.amount, c.cat_name
+      `SELECT u.*, i.*, s.*, iIt.hour, iIt.rate, iIt.amount, c.cat_name
       FROM users AS u 
       LEFT JOIN invoices AS i ON u.userID = i.fk_userID
       LEFT JOIN statistic_data AS s ON u.fk_statisticsID = s.statisticID
       LEFT JOIN invoice_items AS iIt ON i.invoiceID = iIt.fk_invoiceID
-      INNER JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
+      LEFT JOIN categories AS c ON c.categoryID = iIt.fk_categoriesID 
       WHERE u.username='${username}'
       ORDER BY i.invoiceID ASC;
       `
@@ -136,7 +135,9 @@ router.post('/login', async (req, res) => {
         let payload = { userId: user.id };
         // Create token containing user ID
         let token = jwt.sign(payload, SECRET_KEY);
-        user = await joinToJson(results.data);
+        if(user.invoiceID && user.statisticID){
+          user = await joinToJson(results.data);
+        }
         res.send({
           message: 'Login succeeded',
           token: token,

@@ -1,49 +1,74 @@
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  PDFViewer,
-} from '@react-pdf/renderer';
+import * as React from "react";
 
-import './InvoiceDocView.css';
-import InvoiceDoc from '../components/InvoiceDoc';
+// import { FunctionalComponentToPrint } from "../ComponentToPrint";
+// import ReactToPrint from "../../src/index";
 
-// Create styles
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: '#d11fb6',
-    color: 'white',
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-  },
-  viewer: {
-    width: window.innerWidth, //the pdf viewer will take up all of the width and height
-    height: window.innerHeight,
-  },
-});
+export default function CreatePDF() {
+//   const componentRef = React.useRef(null);
 
-// Create Document Component
-function CreatePDF(props) {
+//   // const onBeforeGetContentResolve = React.useRef<(() => void) | null>(null);
 
-  let { id } = useParams();
+//   const [loading, setLoading] = React.useState(false);
+//   const [text, setText] = React.useState("Some cool text from the parent");
 
+//   const handleAfterPrint = React.useCallback(() => {
+//     console.log("`onAfterPrint` called"); // tslint:disable-line no-console
+//   }, []);
+
+//   const handleBeforePrint = React.useCallback(() => {
+//     console.log("`onBeforePrint` called"); // tslint:disable-line no-console
+//   }, []);
+
+//   const handleOnBeforeGetContent = React.useCallback(() => {
+//     console.log("`onBeforeGetContent` called"); // tslint:disable-line no-console
+//     setLoading(true);
+//     setText("Loading new text...");
+
+//     return new Promise<void>((resolve) => {
+//       onBeforeGetContentResolve.current = resolve;
+
+//       setTimeout(() => {
+//         setLoading(false);
+//         setText("New, Updated Text!");
+//         resolve();
+//       }, 2000);
+//     });
+//   }, [setLoading, setText]);
+
+//   React.useEffect(() => {
+//     if (text === "New, Updated Text!" && typeof onBeforeGetContentResolve.current === "function") {
+//       onBeforeGetContentResolve.current();
+//     }
+//   }, [onBeforeGetContentResolve.current, text]);
+
+//   const reactToPrintContent = React.useCallback(() => {
+//     return componentRef.current;
+//   }, [componentRef.current]);
+
+//   const reactToPrintTrigger = React.useCallback(() => {
+//     // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+//     // to the root node of the returned component as it will be overwritten.
+
+//     // Bad: the `onClick` here will be overwritten by `react-to-print`
+//     // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
+
+//     // Good
+//     return <button>Print a Functional Component (using `forwardRef`) using a Functional Component</button>; // eslint-disable-line max-len
+//   }, []);
 
   return (
-    <PDFViewer style={styles.viewer}>
-      {/* Start of the document*/}
-      <Document>
-        {/*render a single page*/}
-        <Page size="A4" style={styles.page}>
-          <View style={styles.section}>
-      <InvoiceDoc billCatFromApp={props.billCatFromApp} />
-          </View>
-        </Page>
-      </Document>
-    </PDFViewer>
+    <div>
+      {/* <ReactToPrint
+        content={reactToPrintContent}
+        documentTitle="AwesomeFileName"
+        onAfterPrint={handleAfterPrint}
+        onBeforeGetContent={handleOnBeforeGetContent}
+        onBeforePrint={handleBeforePrint}
+        removeAfterPrint
+        trigger={reactToPrintTrigger}
+      />
+      {loading && <p className="indicator">onBeforeGetContent: Loading...</p>}
+      <FunctionalComponentToPrint ref={componentRef} text={text} /> */}
+    </div>
   );
-}
-export default CreatePDF;
+};
