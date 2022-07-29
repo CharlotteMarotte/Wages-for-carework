@@ -54,6 +54,13 @@ export default function InvoiceDocView(props) {
 
       {/* button to trigger printing of invoice */}
       <ReactToPrint
+        pageStyle={`
+        @page {
+          size: auto;
+          margin-top: 50mm;
+        }
+  
+`}
         trigger={() => (
           <button className="col-auto offset-5 btn btn-outline-dark btn-signup text-uppercase mb-5">
             Print invoice

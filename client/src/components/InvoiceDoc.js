@@ -1,13 +1,14 @@
-import React, { } from 'react';
+import React from 'react';
 import '../views/InvoiceDocView.css';
 import './InvoiceDoc.css';
 import InvoiceDocItem from './InvoiceDocItem';
 
 // class component because it was needed for react-to-print
-export default class InvoiceDoc extends React.Component {  
- 
-  render(){
-    if (!this.props.currInvoice ) {
+export default class InvoiceDoc extends React.Component {
+  render() {
+   
+
+    if (!this.props.currInvoice) {
       return (
         <figure className="figure">
           <img
@@ -23,16 +24,20 @@ export default class InvoiceDoc extends React.Component {
         </figure>
       );
     }
-  
+
     return (
       <div className="row col-6 offset-3 InvoiceDocView mb-10">
         <div className="col-3 offset-2">
           <h3>FROM:</h3>
         </div>
         <div className="col-3">
-          <p>{this.props.currInvoice.firstNameFrom + ' ' + this.props.currInvoice.lastNameFrom}</p>
+          <p>
+            {this.props.currInvoice.firstNameFrom +
+              ' ' +
+              this.props.currInvoice.lastNameFrom}
+          </p>
         </div>
-  
+
         <div className="col-3">
           <p> {this.props.currInvoice.emailFrom}</p>
         </div>
@@ -42,7 +47,7 @@ export default class InvoiceDoc extends React.Component {
         <div className="col-3">
           <p>{this.props.currInvoice.nameTo}</p>
         </div>
-  
+
         <div className="col-3">
           <p>{this.props.currInvoice.emailTo}</p>
         </div>
@@ -69,15 +74,12 @@ export default class InvoiceDoc extends React.Component {
               index // index as second argument because React needs something for key property
             ) => (
               // arrow function, so it doesn't get called immediately but only after a click
-              <InvoiceDocItem
-                key={index}
-                invoiceFromDoc={it}
-              />
+              <InvoiceDocItem key={index} invoiceFromDoc={it} />
             )
-          )} 
+          )}
         </div>
         <p className="offset-10">Total: {this.props.currInvoice.total} €</p>
       </div>
     );
-  }  
+  }
 }
