@@ -20,7 +20,6 @@ import ProfileView from './views/ProfileView';
 import SignUpView from './views/SignUpView';
 import EditProfileView from './views/EditProfileView';
 import SpecificStatisticsView from './views/SpecificStatisticsView';
-import CreatePDF from './views/CreatePDF';
 
 function App() {
   //
@@ -96,16 +95,13 @@ function App() {
     }
   }
 
-
-
   async function updateUser(userData) {
     let response = await Api.updateUser(user.id, userData); // do POST
     try {
       if (response.status === 401) {
-         console.log(response)
+        console.log(response);
         setUpdateUserErrorMsg('The old password you have entered is incorrect');
-      } 
-      else if(response.ok) {
+      } else if (response.ok) {
         setUpdateUserErrorMsg('');
         let { firstname, lastname, email, username } = response.data;
 
@@ -264,11 +260,15 @@ function App() {
           path="/edit-profile"
           element={
             <PrivateRoute>
-              <EditProfileView user={user} updateUserCb={updateUser} updateUserErrorMsg={updateUserErrorMsg}/>
+              <EditProfileView
+                user={user}
+                updateUserCb={updateUser}
+                updateUserErrorMsg={updateUserErrorMsg}
+              />
             </PrivateRoute>
           }
         />
-     
+
         <Route
           path="enter-data"
           element={
@@ -301,10 +301,7 @@ function App() {
             />
           }
         />
-        <Route
-          path="create-pdf/:id"
-          element={<CreatePDF/>}
-        />
+
         <Route
           path="filter-statistics"
           element={
