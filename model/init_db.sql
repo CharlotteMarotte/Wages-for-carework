@@ -203,7 +203,7 @@ VALUES
     );
 
 INSERT INTO
-    invoice_Items (
+    invoice_items (
         fk_invoiceId,
         fk_categoriesId,
         hour,
