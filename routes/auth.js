@@ -132,7 +132,7 @@ router.post('/login', async (req, res) => {
       let passwordsEqual = await bcrypt.compare(password, user.password);
       if (passwordsEqual) {
         // Passwords match
-        let payload = { userId: user.id };
+        let payload = { userId: user.userID };
         // Create token containing user ID
         let token = jwt.sign(payload, SECRET_KEY);
         if(user.invoiceID && user.statisticID){

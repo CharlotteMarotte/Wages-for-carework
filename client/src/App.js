@@ -96,7 +96,7 @@ function App() {
   }
 
   async function updateUser(userData) {
-    let response = await Api.updateUser(user.id, userData); // do POST
+    let response = await Api.updateUser(user.userID, userData); // do POST
     try {
       if (response.status === 401) {
         console.log(response);
@@ -124,7 +124,7 @@ function App() {
 
   // gets passed as a prop to CreateInvoice View
   async function addInvoice(invoiceData) {
-    invoiceData.fk_userID = user.id; // adds user id of user logged in
+    invoiceData.fk_userID = user.userID; // adds user id of user logged in
     let response = await Api.addInvoice(invoiceData);
     try {
       if (response.ok) {
@@ -145,7 +145,7 @@ function App() {
 
   // gets passed as a prop to Profile View
   async function deleteInvoice(invoiceID) {
-    let response = await Api.deleteInvoice(invoiceID, { userID: user.id });
+    let response = await Api.deleteInvoice(invoiceID, { userID: user.userID });
     try {
       if (response.ok) {
         await getCountInvoices(); // get updated invoices count
