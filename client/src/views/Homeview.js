@@ -6,21 +6,30 @@ function HomeView() {
   //
 
   return (
-    <div className="HomeView col-6 offset-3">
-      <p>
-        This Website was created as a project during a Full Stack Development
-        Bootcamp at CodeOp. Building on my research for my{' '}
-        <a href="https://books.google.de/books/about/K%C3%BCnstliche_k%C3%BCnstliche_Intelligenz.html?id=bvaGzgEACAAJ&redir_esc=y">
-          Bachelor Thesis about Invisible Labor in Artificial Intelligence
-        </a>{' '}
-        and my studies with Dr. Kimberly George in the{' '}
-        <a href="https://www.feminismschool.com/courses/caliban-and-the-witch-in-a-time-of-covid-19-v2">
-          Caliban and the Witch in a Time of COVID-19
-        </a>
-        .
-        Feel free to browse along, create an invoice, evaluate the statistics of other invoices created.
+    <>
+      <p className="h4 col-10 offset-1">
+        Welcome to Wages for carework - your handy invoice tool for invisible
+        labor!
       </p>
-    </div>
+
+      <div className="HomeView col-4 offset-4">
+        <figure className="figure">
+          <img
+            src="/images/Shouting.jpg"
+            className="figure-img img-fluid mb-0"
+            alt="An error occurred"
+          />
+          <figcaption className="figure-caption text-center">
+            <a
+              className="link-secondary"
+              href="https://www.freepik.com/vectors/bullhorn"
+            >
+              Bullhorn vector created by iwat1929 - www.freepik.com
+            </a>
+          </figcaption>
+        </figure>
+      </div>
+    </>
   );
 }
 

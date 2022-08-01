@@ -10,7 +10,15 @@ var StatisticRouter = require('./routes/statistics');
 var UsersRouter = require('./routes/users');
 var AuthRouter = require('./routes/auth');
 
-
+// Location of static assets 
+app.use(express.static(path.join(__dirname, '/client/build'))); 
+ 
+// (All of your API routes should be here) 
+ 
+// Respond with index.html for unmatched routes 
+app.get("*", (req, res) => { 
+    res.sendFile(path.join(__dirname + '/client/build/index.html')); 
+});
 
 var app = express();
 

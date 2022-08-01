@@ -24,7 +24,7 @@ export default function PieChart(props) {
           alt="An error occurred"
         />
         <figcaption className="figure-caption text-center">
-          <a href="https://www.vecteezy.com/vector-art/1384282-404-error-concept-for-landing-page-design">
+          <a className="link-secondary" href="https://www.vecteezy.com/vector-art/1384282-404-error-concept-for-landing-page-design">
             404 error concept for landing page design Vectors by Vecteezy
           </a>
         </figcaption>

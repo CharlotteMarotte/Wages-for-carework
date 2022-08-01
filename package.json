@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "migrate": "node model/database"
+    "migrate": "node model/database",
+  "heroku-postbuild": "cd client && yarn && yarn build"
+
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
