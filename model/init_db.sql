@@ -72,18 +72,18 @@ CREATE TABLE invoice_items (
     FOREIGN KEY (fk_categoriesID) REFERENCES categories(categoryID) ON DELETE CASCADE
 );
 
--- INSERT INTO
---     categories (cat_name)
--- VALUES
---     ('Child care'),
---     ('Cooking'),
---     ('Cleaning'),
---     ('Shopping'),
---     ('Laundry'),
---     ('Transport'),
---     ('Care (other)'),
---     ('Emotional Labor'),
---     ('Management');
+INSERT INTO
+    categories (cat_name)
+VALUES
+    ('Child care'),
+    ('Cooking'),
+    ('Cleaning'),
+    ('Shopping'),
+    ('Laundry'),
+    ('Transport'),
+    ('Care (other)'),
+    ('Emotional Labor'),
+    ('Management');
 
 -- INSERT INTO
 --     statistic_data (
