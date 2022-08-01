@@ -1,28 +1,25 @@
 import React from 'react';
 
 function HomeView() {
-  // 
+  //
   // Home Page, for introductory text
-  // 
+  //
 
   return (
     <div className="HomeView col-6 offset-3">
-      <blockquote className="blockquote">
-        <p>
-          “[A] woman, working fulltime in the home or outside of it as well,
-          married or single, has to put hours of labor into reproducing her own
-          labor power, and women well know the tyranny of this task, for a
-          pretty dress and hairdo are conditions for their getting the job,
-          whether on the marriage market or on the wage labor market.”
-        </p>
-      </blockquote>
-      <figcaption className="blockquote-footer">
-        Silvia Federici{' '}
-        <cite title="Source Title">
-          Revolution at Point Zero: Housework, Reproduction, and Feminist
-          Struggle
-        </cite>
-      </figcaption>
+      <p>
+        This Website was created as a project during a Full Stack Development
+        Bootcamp at CodeOp. Building on my research for my{' '}
+        <a href="https://books.google.de/books/about/K%C3%BCnstliche_k%C3%BCnstliche_Intelligenz.html?id=bvaGzgEACAAJ&redir_esc=y">
+          Bachelor Thesis about Invisible Labor in Artificial Intelligence
+        </a>{' '}
+        and my studies with Dr. Kimberly George in the{' '}
+        <a href="https://www.feminismschool.com/courses/caliban-and-the-witch-in-a-time-of-covid-19-v2">
+          Caliban and the Witch in a Time of COVID-19
+        </a>
+        .
+        Feel free to browse along, create an invoice, evaluate the statistics of other invoices created.
+      </p>
     </div>
   );
 }

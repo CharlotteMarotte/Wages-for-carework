@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ShowAverages from '../components/ShowAverages';
+import PieChart from '../components/PieChart';
 import { Link } from 'react-router-dom';
 
 
@@ -17,6 +18,7 @@ export default function GeneralStatisticsView(props) {
       >
         Filter statistics
       </Link>
+      <PieChart data={props.averagesAll.averages} />
       <ShowAverages
         countInvoices={props.countInvoices}
         generalData={props.averagesAll}
